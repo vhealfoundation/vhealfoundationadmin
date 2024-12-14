@@ -1,0 +1,103 @@
+import React, { useState } from "react";
+import { AiOutlineDashboard, AiOutlineLogout } from "react-icons/ai";
+import { FaDonate, FaImages, FaInfoCircle } from "react-icons/fa";
+import { MdOutlineCategory } from "react-icons/md";
+import { BsPersonLinesFill } from "react-icons/bs";
+import { Link } from "react-router-dom";
+
+const SideNavbar = () => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
+  return (
+    <div
+      className={`z-10 flex flex-col h-screen bg-gray-900 text-white transition-all duration-300 ease-in-out 
+        ${isCollapsed ? "w-20" : "w-[232px]"}`}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-gray-700">
+        <h1
+          className={`text-xl font-bold transition-all duration-300 
+            ${isCollapsed ? "hidden" : "block"}`}
+        >
+          D&M
+        </h1>
+        <button
+          onClick={toggleCollapse}
+          className="text-gray-400 hover:text-white focus:outline-none"
+        >
+          {isCollapsed ? "→" : "←"}
+        </button>
+      </div>
+
+      {/* Navigation Links */}
+      <nav className="flex flex-col mt-4 space-y-2">
+        <Link to ='/dashboard'>
+        <NavItem
+          icon={<AiOutlineDashboard size={24} />}
+          label="Dashboard"
+          collapsed={isCollapsed}
+        />
+        </Link>
+        <Link to ='/donations'>
+        <NavItem
+          icon={<FaDonate size={24} />}
+          label="Donations"
+          collapsed={isCollapsed}
+        />
+        </Link>
+        <Link to ='/about'>
+        <NavItem
+          icon={<FaInfoCircle size={24} />}
+          label="About"
+          collapsed={isCollapsed}
+        />
+        </Link>
+        <Link to ='/gallery'>
+        <NavItem
+          icon={<FaImages size={24} />}
+          label="Gallery"
+          collapsed={isCollapsed}
+        />
+        </Link>
+        <Link to ='/section'>
+        <NavItem
+          icon={<MdOutlineCategory size={24} />}
+          label="Section"
+          collapsed={isCollapsed}
+        />
+        </Link>
+        <Link to ='/story'>
+        <NavItem
+          icon={<BsPersonLinesFill size={24} />}
+          label="Story"
+          collapsed={isCollapsed}
+        />
+        </Link>
+        <Link to ='/signout'>
+        <NavItem
+          icon={<AiOutlineLogout size={24} />}
+          label="Logout"
+          collapsed={isCollapsed}
+        />
+        </Link>
+      </nav>
+    </div>
+  );
+};
+
+const NavItem = ({ icon, label, collapsed }) => {
+  return (
+    <div
+      className="flex items-center p-3 text-gray-300 hover:text-white hover:bg-gray-700 cursor-pointer"
+    >
+      <div className="flex items-center justify-center w-10 h-10">{icon}</div>
+      {!collapsed && <span className="ml-3 text-sm font-medium">{label}</span>}
+    </div>
+  );
+};
+
+export default SideNavbar;
