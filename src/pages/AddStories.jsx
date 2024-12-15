@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "../hoc/Layout";
 import AddStoriesCard from "../components/AddStoriesCard";
 import axios from "axios";
@@ -13,7 +14,7 @@ const AddStories = ({ onCancel }) => {
 
   const [loading, setLoading] = useState(false); // For showing loading state
   const [error, setError] = useState(null); // For handling errors
-
+  const navigate = useNavigate(); // For navigation
   const handleSave = async (storyData) => {
     try {
       setLoading(true);
@@ -23,9 +24,7 @@ const AddStories = ({ onCancel }) => {
       const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/stories`, storyData);
 
       console.log("Story saved successfully:", response.data);
-
-      // Handle success (e.g., redirect or show a message)
-      alert("Story saved successfully!");
+      navigate("/stories");
     } catch (err) {
       console.error("Error saving story:", err);
       setError(err.response?.data?.message || "An unexpected error occurred.");

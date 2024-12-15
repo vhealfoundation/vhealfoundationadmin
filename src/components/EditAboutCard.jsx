@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { FaTrash } from 'react-icons/fa';
 
 const EditAboutCard = ({ about, onUpdate, onCancel }) => {
   const [formData, setFormData] = useState({
     title: about.title,
     description: about.description,
-    content: about.content,
+    content: about.content || [],
     imageSrc: about.imageSrc, // Main image URL
   });
 
@@ -17,7 +17,7 @@ const EditAboutCard = ({ about, onUpdate, onCancel }) => {
     setFormData({
       title: about.title,
       description: about.description,
-      content: about.content,
+      content: about.content || [],
       imageSrc: about.imageSrc,
     });
   }, [about]);
@@ -112,22 +112,34 @@ const EditAboutCard = ({ about, onUpdate, onCancel }) => {
     setFormData({ ...formData, content: updatedContent });
   };
 
+  const handleAddContentBlock = () => {
+    const newContentBlock = {
+      image: "", // Initialize empty or valid image URL
+      title: "", // Initialize empty or valid title
+      description: "", // Initialize empty or valid description
+    };
+
+    setFormData({
+      ...formData,
+      content: [...formData.content, newContentBlock],
+    });
+  };
+
+  const handleRemoveContentBlock = (index) => {
+    const updatedContent = formData.content.filter((_, i) => i !== index);
+    setFormData({
+      ...formData,
+      content: updatedContent,
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    try {
-      const response = await axios.put(
-        `${process.env.REACT_APP_BACKEND_URL}/aboutcards/${about._id}`,
-        formData
-      );
-      onUpdate(response.data.data); // Pass updated data back to parent component
-    } catch (error) {
-      console.error("Error updating about card", error);
-    }
+    onUpdate(formData);
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6">
+    <div className="mt-4 mx-auto bg-white shadow-lg rounded-lg p-6">
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">Edit About Card</h2>
 
       <form onSubmit={handleSubmit}>
@@ -172,17 +184,18 @@ const EditAboutCard = ({ about, onUpdate, onCancel }) => {
 
           {/* Main Image Preview */}
           {formData.imageSrc && !loading && (
-            <div className="mt-4 flex items-center">
+            <div className="mt-4 flex items-center gap-4 ">
               <img
                 src={formData.imageSrc}
                 alt="Main Image"
-                className="w-24 h-24 object-cover rounded-lg shadow-md"
+                className="mt-2 w-1/4 h-auto rounded-lg shadow-md"
               />
+
               <button
-                type="button"
                 onClick={() => handleImageDelete()}
-                className="ml-4 text-red-500 hover:text-red-700"
+                className="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700"
               >
+                <FaTrash className="mr-2" />
                 Delete
               </button>
             </div>
@@ -191,7 +204,7 @@ const EditAboutCard = ({ about, onUpdate, onCancel }) => {
 
         {/* Content Image Sections */}
         {formData.content.map((item, index) => (
-          <div key={item._id} className="mb-4">
+          <div key={index} className="mb-4">
             <h3 className="text-lg font-semibold text-gray-700">Content {index + 1}</h3>
 
             <div className="mb-2">
@@ -228,41 +241,65 @@ const EditAboutCard = ({ about, onUpdate, onCancel }) => {
                 onChange={(e) => handleImageUpload(e, index)} // Handle content image upload
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
               />
-
+            {loading && <p className="mt-2 text-blue-500">Uploading images, please wait...</p>}
               {/* Content Image Preview */}
               {item.image && !loading && (
-                <div className="mt-4 flex items-center">
+                <div className="mt-4 flex items-center gap-4">
                   <img
                     src={item.image}
                     alt={`Content Image ${index + 1}`}
-                    className="w-24 h-24 object-cover rounded-lg shadow-md"
+                    className="mt-2 w-1/4 h-auto rounded-lg shadow-md"
                   />
+
                   <button
-                    type="button"
                     onClick={() => handleImageDelete(index)}
-                    className="ml-4 text-red-500 hover:text-red-700"
+                    className="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700"
                   >
+                    <FaTrash className="mr-2" />
                     Delete
                   </button>
                 </div>
               )}
             </div>
+
+            {/* Remove content block */}
+            <button
+              type="button"
+              onClick={() => handleRemoveContentBlock(index)}
+              className="mt-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+            >
+              Delete Content Block
+            </button>
           </div>
         ))}
 
-        {/* Action Buttons */}
-        <div className="flex justify-end space-x-4 mt-6">
+        {/* Add Content Block Button */}
+        <div className="mb-4">
+    
           <button
+          type="button"
+          onClick={handleAddContentBlock}
+          className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 mb-4"
+        >
+          Add Content Block
+        </button>
+        </div>
+        
+
+        {/* Submit Button */}
+        <div className="flex justify-between mt-4">
+          <button
+            type="button"
             onClick={onCancel}
-            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-700"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
           >
-            Update
+            Save Changes
           </button>
         </div>
       </form>

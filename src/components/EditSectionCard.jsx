@@ -106,7 +106,7 @@ const EditSectionCard = ({ section, onUpdate, onCancel }) => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6">
+    <div className="mt-4 bg-white shadow-lg rounded-lg p-6">
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">Edit Section</h2>
       <form onSubmit={handleSubmit}>
         {/* Image Upload */}
@@ -126,7 +126,7 @@ const EditSectionCard = ({ section, onUpdate, onCancel }) => {
               <img
                 src={formData.image}
                 alt="Image preview"
-                className="w-full h-auto max-w-xs rounded-lg"
+                className="mt-2 w-1/4 h-auto rounded-lg shadow-md"
               />
             </div>
           )}
@@ -196,7 +196,7 @@ const EditSectionCard = ({ section, onUpdate, onCancel }) => {
         <div className="mb-4">
           <label className="block text-gray-700">Features</label>
           {formData.features.map((feature, index) => (
-            <div key={index} className="mb-2 flex items-center">
+            <div key={index} className="mb-2 flex items-center gap-4">
               <input
                 type="text"
                 value={feature}
@@ -205,9 +205,8 @@ const EditSectionCard = ({ section, onUpdate, onCancel }) => {
                 placeholder={`Feature ${index + 1}`}
               />
               <button
-                type="button"
                 onClick={() => removeFeature(index)}
-                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg"
+                className="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700"
               >
                 <FaTrash className="mr-2" />
                 Delete
@@ -247,7 +246,7 @@ const EditSectionCard = ({ section, onUpdate, onCancel }) => {
             type="submit"
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
           >
-            Submit
+            Save Changes
           </button>
         </div>
       </form>

@@ -1,5 +1,6 @@
 // EditAbout.jsx
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Layout from "../hoc/Layout";
@@ -27,12 +28,25 @@ const EditAbout = () => {
 
     fetchAboutCard();
   }, [id]);
-
-  const handleUpdate = (updatedData) => {
-    setAbout(updatedData); // Update the state with the new data
-    navigate("/about"); // Redirect to the "about" page after update
+  const handleUpdate = async (updatedData) => {
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_BACKEND_URL}/aboutcards/${id}`,
+        updatedData
+      );  
+      setAbout(response.data.data); // Update the about state with the response data
+      toast.success("About card updated successfully!");
+      navigate("/about"); // Redirect to the "about" page after updating
+    } catch (error) {
+      console.error("Error updating about card:", error);
+    }
   };
 
+  /**
+   * Handle cancel (redirect to the "about" page)
+   * 
+   * @function
+   */
   const handleCancel = () => {
     navigate("/about"); // Redirect to the "about" page if cancelled
   };
@@ -42,7 +56,6 @@ const EditAbout = () => {
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold">Edit About</h1>
-      <p className="mt-4">Edit information about your organization.</p>
       <div>
         {about && (
           <EditAboutCard

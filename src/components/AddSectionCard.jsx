@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { IconButton, Switch } from "@mui/material";
+import { FaTrash } from 'react-icons/fa';
 
 const AddSectionCard = ({ formData, onFormChange, onSubmit, onCancel, loading }) => {
   const [imagePreview, setImagePreview] = useState(null); // Main image preview
@@ -72,13 +74,19 @@ const AddSectionCard = ({ formData, onFormChange, onSubmit, onCancel, loading })
     onFormChange(newFormData);
   };
 
+  const removeFeature = (index) => {
+    const updatedFeatures = formData.features.filter((_, i) => i !== index);
+    const newFormData = { ...formData, features: updatedFeatures };
+    onFormChange(newFormData);
+  };
+
   const handleReverseToggle = () => {
     const newFormData = { ...formData, reverse: !formData.reverse };
     onFormChange(newFormData);
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6">
+    <div className="mt-4 bg-white shadow-lg rounded-lg p-6">
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">Add Section</h2>
       <form>
         {/* Image Upload */}
@@ -102,25 +110,13 @@ const AddSectionCard = ({ formData, onFormChange, onSubmit, onCancel, loading })
           )}
         </div>
 
-        {/* Alt Text */}
-        <div className="mb-4">
-          <label htmlFor="alt" className="block text-gray-700">Alt Text</label>
-          <input
-            type="text"
-            id="alt"
-            name="alt"
-            value={formData.alt}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            required
-          />
-        </div>
+
 
         {/* Heading */}
         <div className="mb-4">
           <label htmlFor="heading" className="block text-gray-700">Heading</label>
           <input
-            type="text"
+            type="text"s
             id="heading"
             name="heading"
             value={formData.heading}
@@ -161,7 +157,7 @@ const AddSectionCard = ({ formData, onFormChange, onSubmit, onCancel, loading })
         <div className="mb-4">
           <label className="block text-gray-700">Features</label>
           {formData.features?.map((feature, index) => (
-            <div key={index} className="mb-2">
+            <div key={index} className="flex items-center mb-2">
               <input
                 type="text"
                 value={feature}
@@ -169,6 +165,13 @@ const AddSectionCard = ({ formData, onFormChange, onSubmit, onCancel, loading })
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 placeholder={`Feature ${index + 1}`}
               />
+              <IconButton
+                onClick={() => removeFeature(index)}
+                color="error"
+                className="ml-2"
+              >
+                <FaTrash />
+              </IconButton>
             </div>
           ))}
           <button
@@ -183,14 +186,11 @@ const AddSectionCard = ({ formData, onFormChange, onSubmit, onCancel, loading })
         {/* Reverse Toggle */}
         <div className="mb-4 flex items-center">
           <label htmlFor="reverse" className="block text-gray-700 mr-4">Reverse Order</label>
-          <label className="switch">
-            <input
-              type="checkbox"
-              checked={formData.reverse}
-              onChange={handleReverseToggle}
-            />
-            <span className="slider round"></span>
-          </label>
+          <Switch
+            checked={formData.reverse}
+            onChange={handleReverseToggle}
+            color="primary"
+          />
         </div>
 
         {/* Action Buttons */}

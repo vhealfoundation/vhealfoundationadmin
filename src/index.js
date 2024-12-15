@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Toaster } from "react-hot-toast";
 
 import { BrowserRouter } from 'react-router-dom';  // Import BrowserRouter
 
@@ -14,6 +15,7 @@ root.render(
     {/* Wrap the App component with BrowserRouter */}
     <BrowserRouter>
       <App />
+      <Toaster />
     </BrowserRouter>
   </React.StrictMode>
 );

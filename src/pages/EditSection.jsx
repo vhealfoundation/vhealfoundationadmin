@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Layout from "../hoc/Layout";
 import EditSectionCard from "../components/EditSectionCard";
+import toast from "react-hot-toast";
 
 const EditSection = () => {
   const { id } = useParams(); // Get ID from URL params
@@ -37,6 +38,7 @@ const EditSection = () => {
       );
       
       setSection(response.data.data); // Update the section state with the response data
+      toast.success("Section card updated successfully!");
       navigate("/sections");
     } catch (error) {
       console.error("Error updating section:", error);
@@ -53,7 +55,6 @@ const EditSection = () => {
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold">Edit Section</h1>
-      <p className="mt-4">Edit your section information here.</p>
       <div>
         {section && (
           <EditSectionCard

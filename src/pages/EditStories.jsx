@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "../hoc/Layout";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -8,6 +9,7 @@ const EditStories = () => {
   const [story, setStory] = useState(null); // Initialize as null
   const [loading, setLoading] = useState(true);
   const { id } = useParams(); // Get the ID from the route parameters
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchStory = async () => {
       try {
@@ -25,10 +27,11 @@ const EditStories = () => {
   const handleSave = async (updatedStory) => {
     try {
       const response = await axios.put(
-        `${process.env.REACT_APP_BACKEND_URL}/stories/${updatedStory._id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/stories/${id}`,
         updatedStory
       );
-      setStory(response.data); // Update the local state with the saved data
+      setStory(response.data.data); // Update the local state with the saved data
+      navigate("/stories");
     } catch (error) {
       console.error("Error updating the story:", error);
     }

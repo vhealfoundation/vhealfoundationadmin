@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Layout from "../hoc/Layout";
@@ -36,6 +37,7 @@ const Sections = () => {
     try {
       await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/sections/${id}`);
       setSections(sections.filter((section) => section._id !== id));
+      toast.success("Section deleted successfully!");
     } catch (err) {
       console.error("Error deleting section:", err);
     }
@@ -43,17 +45,19 @@ const Sections = () => {
 
   return (
     <div className="p-6">
+      <div className="flex items-center justify-between">
       <h1 className="text-3xl font-bold">Sections</h1>
-      <p className="mt-4">Organize and manage different sections of your website.</p>
+      
 
       {/* Add New Section Button */}
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4 flex items-center"
+        className="bg-blue-500 text-white px-4 py-2 rounded-md flex items-center"
         onClick={() => navigate("/sections/new")}
       >
         <AiOutlinePlus className="mr-2" />
-        Add New Sectione
+        Add New Section
       </button>
+    </div>
 
       {/* Display loading or sections */}
       {loading ? (
@@ -66,7 +70,7 @@ const Sections = () => {
               section={section}
               onDelete={(section) => {
                 setSelectedSection(section);
-                setShowModal(true); // Show confirmation modal
+                setShowModal(true);
               }}
               onEdit={(section) => {
                 navigate(`/sections/${section._id}`);
@@ -81,8 +85,8 @@ const Sections = () => {
         <ConfirmDeleteModal
           isOpen={showModal}
           onConfirm={() => {
-            deleteSection(selectedSection._id);
-            setShowModal(false); // Close the modal
+            deleteSection(selectedSection._id); // Pass the selected section's _id to the delete function
+            setShowModal(false); // Close the modal after confirming
           }}
           onCancel={() => setShowModal(false)} // Close the modal when cancelled
         />

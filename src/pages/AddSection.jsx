@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-hot-toast";
 import AddSectionCard from "../components/AddSectionCard";
 import Layout from "../hoc/Layout";
 import axios from "axios";
@@ -6,10 +7,11 @@ import { useNavigate } from "react-router-dom";
 
 const AddSection = () => {
   const [formData, setFormData] = useState({
-    title: "",
+    image: "",
+    heading: "",
+    subheading: "",
     description: "",
-    imageSrc: "",
-    content: [{ title: "", description: "", image: "" }],
+    features: [],
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -20,6 +22,18 @@ const AddSection = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (
+      !formData.image ||
+      !formData.alt ||
+      !formData.heading ||
+      !formData.subheading ||
+      !formData.description ||
+      formData.features.length === 0
+    ) {
+      toast.error("Please fill all the fields!");
+      return; 
+    }
+    
     try {
       setLoading(true);
       const response = await axios.post(
@@ -27,7 +41,8 @@ const AddSection = () => {
         formData
       );
       setLoading(false);
-      navigate("/sections"); // Redirect to the Sections page after successful submission
+      toast.success("Section card added successfully!");
+      navigate("/sections"); 
     } catch (err) {
       setLoading(false);
       console.error("Error adding section:", err);
@@ -40,8 +55,7 @@ const AddSection = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold">Add New Section</h1>
-      <p className="mt-4">Fill out the form to add a new section to your website.</p>
+      <h1 className="text-3xl font-bold">Add New</h1>
 
       <AddSectionCard
         formData={formData}

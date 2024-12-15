@@ -24,13 +24,14 @@ const Stories = () => {
     fetchStories();
   }, []);
 
-  const handleEdit = (id) => {
-   navigate(`/stories/${id}`);
-  };
 
   const handleDelete = async (id) => {
-    console.log("Delete story with ID:", id);
-    // Implement delete functionality with a confirmation prompt
+    try {
+      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/stories/${id}`);
+      setStories((prevStories) => prevStories.filter((story) => story._id !== id));
+    } catch (error) {
+      console.error("Error deleting story:", error);
+    }
   };
 
   if (loading) return <div>Loading...</div>;
@@ -53,7 +54,6 @@ const Stories = () => {
           <StoryCard
             key={story._id}
             story={story}
-            onEdit={handleEdit}
             onDelete={handleDelete}
 
           />

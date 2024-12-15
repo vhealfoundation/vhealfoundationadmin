@@ -92,12 +92,19 @@ const AddAboutCard = ({ formData, onFormChange, onSubmit, onCancel }) => {
         { title: "", description: "", publicId: "", image: "" },
       ],
     };
+    setContentImagePreviews(null);
+    onFormChange(newFormData); // Update parent component state
+  };
+
+  // Function to handle content block removal
+  const removeContentBlock = (index) => {
+    const updatedContent = formData.content.filter((_, idx) => idx !== index);
+    const newFormData = { ...formData, content: updatedContent };
     onFormChange(newFormData); // Update parent component state
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">Add About Card</h2>
+    <div className="mt-4 mx-auto bg-white shadow-lg rounded-lg p-6">
 
       {/* Title and Description Fields */}
       <form>
@@ -142,10 +149,11 @@ const AddAboutCard = ({ formData, onFormChange, onSubmit, onCancel }) => {
             accept="image/*"
             onChange={(e) => handleImageUpload(e)} // Handle main image upload
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            required
           />
           
-          {loading && <p className="mt-2 text-blue-500">Uploading images, please wait...</p>} {/* Display loading text while uploading */}
-          
+          {loading && <p className="mt-2 text-blue-500">Uploading images, please wait...</p>} 
+
           {/* Main Image Preview */}
           {imagePreview && !loading && (
             <div className="mt-4">
@@ -153,14 +161,14 @@ const AddAboutCard = ({ formData, onFormChange, onSubmit, onCancel }) => {
               <img
                 src={imagePreview}
                 alt="Image preview"
-                className="mt-2 w-full h-auto max-w-xs rounded-lg shadow-md"
+                className="mt-2 w-1/4 h-auto rounded-lg shadow-md"
               />
             </div>
           )}
         </div>
 
         {/* Content Fields */}
-        {formData.content.map((item, index) => (
+        {formData.content?.map((item, index) => (
           <div key={index} className="mb-4">
             <h3 className="text-lg font-semibold text-gray-700">
               Content {index + 1}
@@ -219,9 +227,13 @@ const AddAboutCard = ({ formData, onFormChange, onSubmit, onCancel }) => {
                 accept="image/*"
                 onChange={(e) => handleImageUpload(e, index)} // Handle content image upload
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                required
               />
 
-              {contentImagePreviews[index] && !loading && (
+              {loading && <p className="mt-2 text-blue-500">Uploading images, please wait...</p>}
+
+              {contentImagePreviews && contentImagePreviews[index] && !loading && (
+                
                 <div className="mt-2">
                   <p className="text-gray-600">Content Image Preview:</p>
                   <img
@@ -232,6 +244,15 @@ const AddAboutCard = ({ formData, onFormChange, onSubmit, onCancel }) => {
                 </div>
               )}
             </div>
+
+            {/* Delete Content Block Button */}
+            <button
+              type="button"
+              onClick={() => removeContentBlock(index)}
+              className="mt-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+            >
+              Delete Content Block
+            </button>
           </div>
         ))}
 
