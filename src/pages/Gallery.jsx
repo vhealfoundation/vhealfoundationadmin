@@ -3,8 +3,9 @@ import axios from "axios";
 import Layout from "../hoc/Layout";
 import GalleryCard from "../components/GalleryCard";
 import Loader from "../components/Loader";
-import { AiOutlinePlus } from "react-icons/ai";
+import {FaPlus } from "react-icons/fa";
 import Modal from "../components/Modal";
+
 
 const Gallery = () => {
   const [galleryData, setGalleryData] = useState([]);
@@ -59,32 +60,32 @@ const Gallery = () => {
   };
 
   // Handle image uploads when the "Upload" button is clicked
-// Handle image uploads when the "Upload" button is clicked
-const handleImageUpload = async () => {
-  if (selectedFiles.length === 0) return;
+  // Handle image uploads when the "Upload" button is clicked
+  const handleImageUpload = async () => {
+    if (selectedFiles.length === 0) return;
 
-  try {
-    setUploading(true); // Show upload message
-    const uploadedUrls = await Promise.all(selectedFiles.map((file) => uploadImageToCloudinary(file)));
+    try {
+      setUploading(true); // Show upload message
+      const uploadedUrls = await Promise.all(selectedFiles.map((file) => uploadImageToCloudinary(file)));
 
-    // Save uploaded images to the backend
-    await axios.post(`${process.env.REACT_APP_BACKEND_URL}/gallery`, {
-      images: uploadedUrls.map((url) => ({ url })),
-    });
+      // Save uploaded images to the backend
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/gallery`, {
+        images: uploadedUrls.map((url) => ({ url })),
+      });
 
-    // Update gallery with new images
-    setGalleryData((prevData) => [...prevData, ...uploadedUrls.map((url) => ({ url }))]);
+      // Update gallery with new images
+      setGalleryData((prevData) => [...prevData, ...uploadedUrls.map((url) => ({ url }))]);
 
-    // Reset the image previews and selected files after successful upload
-    setImagePreviews([]); // Clear previews
-    setSelectedFiles([]); // Clear selected files
-    setShowModal(false); // Close modal
-  } catch (error) {
-    console.error("Image upload failed:", error);
-  } finally {
-    setUploading(false); // Hide upload message
-  }
-};
+      // Reset the image previews and selected files after successful upload
+      setImagePreviews([]); // Clear previews
+      setSelectedFiles([]); // Clear selected files
+      setShowModal(false); // Close modal
+    } catch (error) {
+      console.error("Image upload failed:", error);
+    } finally {
+      setUploading(false); // Hide upload message
+    }
+  };
 
 
   // Delete an image
@@ -98,20 +99,19 @@ const handleImageUpload = async () => {
   };
 
   return (
-    <div className="p-6 relative">
+    <div className="p-6">
       {loading && <Loader />}
-
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Gallery</h1>
 
         {error && <p className="text-red-500">{error}</p>}
 
-
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4 flex items-center"
           onClick={() => setShowModal(true)}
+          className="flex items-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
         >
-          <AiOutlinePlus className="mr-2" />
+          <FaPlus className="mr-2" />
+
           Add New
         </button>
       </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { IconButton, Switch } from "@mui/material";
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaPlus } from 'react-icons/fa';
 
 const AddSectionCard = ({ formData, onFormChange, onSubmit, onCancel, loading }) => {
   const [imagePreview, setImagePreview] = useState(null); // Main image preview
@@ -104,7 +104,7 @@ const AddSectionCard = ({ formData, onFormChange, onSubmit, onCancel, loading })
               <img
                 src={imagePreview}
                 alt="Image preview"
-                className="w-full h-auto max-w-xs rounded-lg"
+                className="mt-2 w-1/4 h-auto rounded-lg shadow-md"
               />
             </div>
           )}
@@ -157,7 +157,7 @@ const AddSectionCard = ({ formData, onFormChange, onSubmit, onCancel, loading })
         <div className="mb-4">
           <label className="block text-gray-700">Features</label>
           {formData.features?.map((feature, index) => (
-            <div key={index} className="flex items-center mb-2">
+            <div key={index} className="flex items-center my-2">
               <input
                 type="text"
                 value={feature}
@@ -177,8 +177,8 @@ const AddSectionCard = ({ formData, onFormChange, onSubmit, onCancel, loading })
           <button
             type="button"
             onClick={addFeature}
-            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 mb-4"
-          >
+            className="mt-2 flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 mb-4"
+          >  <FaPlus className="mr-2" />
             Add Feature
           </button>
         </div>
@@ -194,7 +194,7 @@ const AddSectionCard = ({ formData, onFormChange, onSubmit, onCancel, loading })
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-between">
+        <div className="flex justify-end space-x-4">
           <button
             type="button"
             onClick={onCancel}
@@ -206,9 +206,8 @@ const AddSectionCard = ({ formData, onFormChange, onSubmit, onCancel, loading })
             type="submit"
             onClick={onSubmit}
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
-            disabled={loading}
           >
-            {loading ? "Submitting..." : "Submit"}
+            Save
           </button>
         </div>
       </form>

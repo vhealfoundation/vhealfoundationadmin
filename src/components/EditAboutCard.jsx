@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaPlus} from 'react-icons/fa';
 
 const EditAboutCard = ({ about, onUpdate, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -279,15 +279,16 @@ const EditAboutCard = ({ about, onUpdate, onCancel }) => {
           <button
           type="button"
           onClick={handleAddContentBlock}
-          className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 mb-4"
+          className="flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 mb-4"
         >
+           <FaPlus className="mr-2" />
           Add Content Block
         </button>
         </div>
         
 
         {/* Submit Button */}
-        <div className="flex justify-between mt-4">
+        <div className="flex justify-end space-x-4 mt-4">
           <button
             type="button"
             onClick={onCancel}

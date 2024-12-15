@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Layout from "../hoc/Layout";
 import { useParams } from "react-router-dom";
@@ -30,7 +31,8 @@ const EditStories = () => {
         `${process.env.REACT_APP_BACKEND_URL}/stories/${id}`,
         updatedStory
       );
-      setStory(response.data.data); // Update the local state with the saved data
+      setStory(response.data.data);
+      toast.success("Story updated successfully!");
       navigate("/stories");
     } catch (error) {
       console.error("Error updating the story:", error);
@@ -47,7 +49,6 @@ const EditStories = () => {
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold">Edit Story</h1>
-      <p className="mt-4">Modify the story and its content sections.</p>
 
       {story ? (
         <EditStoriesCard story={story} onSave={handleSave} onCancel={handleCancel} />

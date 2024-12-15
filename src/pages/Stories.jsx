@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Layout from "../hoc/Layout";
 import StoryCard from "../components/StoryCard";
+import Loader from "../components/Loader";  
+import { FaPlus } from "react-icons/fa";
 
 const Stories = () => {
   const [stories, setStories] = useState([]);
@@ -29,34 +32,38 @@ const Stories = () => {
     try {
       await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/stories/${id}`);
       setStories((prevStories) => prevStories.filter((story) => story._id !== id));
+      toast.success("Story deleted successfully!");
     } catch (error) {
       console.error("Error deleting story:", error);
     }
   };
 
-  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold">Stories</h1>
-      <p className="mt-4">Add and edit success stories or other impactful narratives.</p>
-      <button
-        onClick={() => navigate("/stories/new")}  a
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-      >
-        Add New Story
-      </button>
+      {loading && <Loader />}
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold">Stories</h1>
+        <button
+          onClick={() => navigate("/stories/new")} 
+          className="flex items-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+        >
+          <FaPlus className="mr-2" />
 
-      <div className="mt-6 flex flex-wrap">
+          Add New Story
+        </button>
+      </div>
+
+      <div className="flex flex-wrap">
         {stories.map((story) => (
           <div className="w-full md:w-1/2 lg:w-1/3 p-4">
 
-          <StoryCard
-            key={story._id}
-            story={story}
-            onDelete={handleDelete}
+            <StoryCard
+              key={story._id}
+              story={story}
+              onDelete={handleDelete}
 
-          />
+            />
           </div>
         ))}
       </div>

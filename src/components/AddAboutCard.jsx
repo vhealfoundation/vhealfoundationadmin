@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FaPlus } from "react-icons/fa";
 
 const AddAboutCard = ({ formData, onFormChange, onSubmit, onCancel }) => {
   const [loading, setLoading] = useState(false); // State to track if image is uploading
@@ -151,8 +152,8 @@ const AddAboutCard = ({ formData, onFormChange, onSubmit, onCancel }) => {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
             required
           />
-          
-          {loading && <p className="mt-2 text-blue-500">Uploading images, please wait...</p>} 
+
+          {loading && <p className="mt-2 text-blue-500">Uploading images, please wait...</p>}
 
           {/* Main Image Preview */}
           {imagePreview && !loading && (
@@ -233,7 +234,7 @@ const AddAboutCard = ({ formData, onFormChange, onSubmit, onCancel }) => {
               {loading && <p className="mt-2 text-blue-500">Uploading images, please wait...</p>}
 
               {contentImagePreviews && contentImagePreviews[index] && !loading && (
-                
+
                 <div className="mt-2">
                   <p className="text-gray-600">Content Image Preview:</p>
                   <img
@@ -260,13 +261,13 @@ const AddAboutCard = ({ formData, onFormChange, onSubmit, onCancel }) => {
         <button
           type="button"
           onClick={addContent}
-          className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 mb-4"
-        >
+          className="flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 mb-4"
+        > <FaPlus className="mr-2" />
           Add Content Block
         </button>
 
         {/* Action Buttons */}
-        <div className="flex justify-between">
+        <div className="flex justify-end space-x-4">
           <button
             type="button"
             onClick={onCancel}
@@ -279,7 +280,7 @@ const AddAboutCard = ({ formData, onFormChange, onSubmit, onCancel }) => {
             onClick={onSubmit}
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
           >
-            Submit
+            Save
           </button>
         </div>
       </form>

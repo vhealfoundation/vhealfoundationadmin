@@ -16,12 +16,12 @@ const AboutCard = ({ about, onDelete }) => {
   };
 
   return (
-    <div className="relative  bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="p-6 relative  bg-white shadow-lg rounded-lg overflow-hidden">
       {/* Main Card Image */}
-      <img className="w-full h-48 object-cover" src={about.imageSrc} alt={about.title} />
+      <img className="w-full h-48 object-cover rounded-md" src={about.imageSrc} alt={about.title} />
 
       {/* Card Content */}
-      <div className="p-4">
+      <div className="mt-4">
         <h2 className="text-xl font-bold text-gray-800">{about.title}</h2>
         <p className="text-gray-600 mt-2">{about.description}</p>
 

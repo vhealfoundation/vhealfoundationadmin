@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Layout from "../hoc/Layout";
 import { FaTrash, FaPlus } from "react-icons/fa";
 
 const AddStoriesCard = ({ story, onSave, onCancel }) => {
@@ -89,8 +88,7 @@ const AddStoriesCard = ({ story, onSave, onCancel }) => {
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">Add New Story</h2>
+    <div className="mt-4 bg-white shadow-lg rounded-lg p-6">
 
       {/* Cover Image */}
       <div className="mb-4">
@@ -99,14 +97,14 @@ const AddStoriesCard = ({ story, onSave, onCancel }) => {
           type="file"
           id="coverimage"
           onChange={handleCoverImageUpload}
-          className="mb-2"
+          className="my-2"
         />
         {uploading && <p className="text-blue-500">Uploading...</p>}
         {formData.coverimage && (
           <img
             src={formData.coverimage}
             alt="Cover"
-            className="w-1/3 h-48 rounded-lg mt-2"
+            className="mt-2 w-1/4 h-auto rounded-lg shadow-md"
           />
         )}
       </div>
@@ -215,11 +213,11 @@ const AddStoriesCard = ({ story, onSave, onCancel }) => {
           onClick={handleSave}
           className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
         >
-          Save Story
+          Save
         </button>
       </div>
     </div>
   );
 };
 
-export default Layout(AddStoriesCard);
+export default AddStoriesCard

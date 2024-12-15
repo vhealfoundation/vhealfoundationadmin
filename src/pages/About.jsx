@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Layout from "../hoc/Layout";
 import AboutCard from "../components/AboutCard";
 import Loader from "../components/Loader";
+import { FaPlus } from "react-icons/fa";
 
 const About = () => {
   const [aboutData, setAboutData] = useState([]);
@@ -27,11 +28,12 @@ const About = () => {
 
     fetchAboutData();
   }, []);
-  
+
   const handleDelete = async (id) => {
     try {
       await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/aboutcards/${id}`);
       setAboutData((prevData) => prevData.filter((about) => about._id !== id));
+      toast.success("About card deleted successfully!");
     } catch (error) {
       console.error("Error deleting about card:", error);
     }
@@ -40,15 +42,17 @@ const About = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center">
-      <h1 className="text-3xl font-bold">About</h1>
-      <button
-        onClick={() => navigate("/about/new")}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded mt-4"
-      >
-        Add New
-      </button>
-      </div>
+        <h1 className="text-3xl font-bold">About</h1>
+        <button
+          onClick={() => navigate("/about/new")}
+          className="flex items-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+        >
+          <FaPlus className="mr-2" />
 
+          Add New
+        </button>
+      </div>
+ 
       {/* Display loading state, error state, or AboutCard */}
       {loading ? (
         <Loader />

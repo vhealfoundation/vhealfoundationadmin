@@ -5,8 +5,8 @@ import axios from "axios";
 import Layout from "../hoc/Layout";
 import SectionCard from "../components/SectionCard";
 import Loader from "../components/Loader";
-import { AiOutlinePlus } from "react-icons/ai";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
+import { FaPlus } from "react-icons/fa";
 
 const Sections = () => {
   const [sections, setSections] = useState([]);
@@ -51,10 +51,10 @@ const Sections = () => {
 
       {/* Add New Section Button */}
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded-md flex items-center"
+        className="flex items-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
         onClick={() => navigate("/sections/new")}
       >
-        <AiOutlinePlus className="mr-2" />
+       <FaPlus className="mr-2" />
         Add New Section
       </button>
     </div>

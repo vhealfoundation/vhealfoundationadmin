@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { IconButton, Switch } from "@mui/material";
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaPlus } from 'react-icons/fa';
 
 
 
@@ -196,7 +196,7 @@ const EditSectionCard = ({ section, onUpdate, onCancel }) => {
         <div className="mb-4">
           <label className="block text-gray-700">Features</label>
           {formData.features.map((feature, index) => (
-            <div key={index} className="mb-2 flex items-center gap-4">
+            <div key={index} className="my-2 flex items-center gap-4">
               <input
                 type="text"
                 value={feature}
@@ -217,8 +217,8 @@ const EditSectionCard = ({ section, onUpdate, onCancel }) => {
           <button
             type="button"
             onClick={addFeature}
-            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 mb-4"
-          >
+            className="mt-2 flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 mb-4"
+          > <FaPlus className="mr-2" />
             Add Feature
           </button>
         </div>
@@ -234,7 +234,7 @@ const EditSectionCard = ({ section, onUpdate, onCancel }) => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-between">
+        <div className="flex justify-end space-x-4">
           <button
             type="button"
             onClick={onCancel}

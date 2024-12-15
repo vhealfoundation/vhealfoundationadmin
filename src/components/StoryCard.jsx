@@ -15,7 +15,7 @@ const StoryCard = ({ story, onDelete }) => {
 
   return (
     <>
-      <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
+      <div className="mt-4 bg-white shadow-lg rounded-lg p-6 mb-6">
         {/* Cover Image */}
         <div className="mb-4">
           <img

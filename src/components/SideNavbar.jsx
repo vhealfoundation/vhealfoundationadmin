@@ -4,9 +4,13 @@ import { FaDonate, FaImages, FaInfoCircle } from "react-icons/fa";
 import { MdOutlineCategory } from "react-icons/md";
 import { BsPersonLinesFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
+import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 
 const SideNavbar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { user, logout } = useKindeAuth();
+
+  console.log(user);
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -33,57 +37,76 @@ const SideNavbar = () => {
         </button>
       </div>
 
+      {/* User Info */}
+      <div
+        className={`flex items-center p-4 border-b border-gray-700 ${
+          isCollapsed ? "justify-center" : ""
+        }`}
+      >
+        <img
+          src={user?.picture}
+          alt="User Avatar"
+          className="w-10 h-10 rounded-full"
+        />
+        {!isCollapsed && (
+          <div className="ml-3">
+            <p className="text-sm font-medium">{user?.name}</p>
+            <p className="text-xs text-gray-400">{user?.email}</p>
+          </div>
+        )}
+      </div>
+
       {/* Navigation Links */}
       <nav className="flex flex-col mt-4 space-y-2">
-        <Link to ='/dashboard'>
-        <NavItem
-          icon={<AiOutlineDashboard size={24} />}
-          label="Dashboard"
-          collapsed={isCollapsed}
-        />
+        <Link to="/dashboard">
+          <NavItem
+            icon={<AiOutlineDashboard size={24} />}
+            label="Dashboard"
+            collapsed={isCollapsed}
+          />
         </Link>
-        <Link to ='/donations'>
-        <NavItem
-          icon={<FaDonate size={24} />}
-          label="Donations"
-          collapsed={isCollapsed}
-        />
+        <Link to="/donations">
+          <NavItem
+            icon={<FaDonate size={24} />}
+            label="Donations"
+            collapsed={isCollapsed}
+          />
         </Link>
-        <Link to ='/about'>
-        <NavItem
-          icon={<FaInfoCircle size={24} />}
-          label="About"
-          collapsed={isCollapsed}
-        />
+        <Link to="/about">
+          <NavItem
+            icon={<FaInfoCircle size={24} />}
+            label="About"
+            collapsed={isCollapsed}
+          />
         </Link>
-        <Link to ='/gallery'>
-        <NavItem
-          icon={<FaImages size={24} />}
-          label="Gallery"
-          collapsed={isCollapsed}
-        />
+        <Link to="/gallery">
+          <NavItem
+            icon={<FaImages size={24} />}
+            label="Gallery"
+            collapsed={isCollapsed}
+          />
         </Link>
-        <Link to ='/sections'>
-        <NavItem
-          icon={<MdOutlineCategory size={24} />}
-          label="Section"
-          collapsed={isCollapsed}
-        />
+        <Link to="/sections">
+          <NavItem
+            icon={<MdOutlineCategory size={24} />}
+            label="Section"
+            collapsed={isCollapsed}
+          />
         </Link>
-        <Link to ='/stories'>
-        <NavItem
-          icon={<BsPersonLinesFill size={24} />}
-          label="Story"
-          collapsed={isCollapsed}
-        />
+        <Link to="/stories">
+          <NavItem
+            icon={<BsPersonLinesFill size={24} />}
+            label="Story"
+            collapsed={isCollapsed}
+          />
         </Link>
-        <Link to ='/signout'>
-        <NavItem
-          icon={<AiOutlineLogout size={24} />}
-          label="Logout"
-          collapsed={isCollapsed}
-        />
-        </Link>
+        <div onClick={logout}>
+          <NavItem
+            icon={<AiOutlineLogout size={24} />}
+            label="Logout"
+            collapsed={isCollapsed}
+          />
+        </div>
       </nav>
     </div>
   );
@@ -91,9 +114,7 @@ const SideNavbar = () => {
 
 const NavItem = ({ icon, label, collapsed }) => {
   return (
-    <div
-      className="flex items-center p-3 text-gray-300 hover:text-white hover:bg-gray-700 cursor-pointer"
-    >
+    <div className="flex items-center p-3 text-gray-300 hover:text-white hover:bg-gray-700 cursor-pointer">
       <div className="flex items-center justify-center w-10 h-10">{icon}</div>
       {!collapsed && <span className="ml-3 text-sm font-medium">{label}</span>}
     </div>

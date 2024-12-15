@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Layout from "../hoc/Layout";
 import AddStoriesCard from "../components/AddStoriesCard";
@@ -16,14 +17,18 @@ const AddStories = ({ onCancel }) => {
   const [error, setError] = useState(null); // For handling errors
   const navigate = useNavigate(); // For navigation
   const handleSave = async (storyData) => {
+    if(!storyData.coverimage || !storyData.title || !storyData.description || storyData.content.length === 0){
+      toast.error("Please fill all the fields");
+      return;
+      
+    }
     try {
       setLoading(true);
       setError(null);
 
       // Making a POST request to the /stories API to save the new story
       const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/stories`, storyData);
-
-      console.log("Story saved successfully:", response.data);
+      toast.success("Story saved successfully!");
       navigate("/stories");
     } catch (err) {
       console.error("Error saving story:", err);
@@ -38,11 +43,9 @@ const AddStories = ({ onCancel }) => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-semibold text-gray-800 mb-6">Add New Story</h1>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
+    <div className="p-6">
+    <h1 className="text-3xl font-bold">Add New</h1>
       <AddStoriesCard story={newStory} onSave={handleSave} onCancel={handleCancel} />
-      {loading && <p className="text-blue-500 mt-4">Saving story, please wait...</p>}
     </div>
   );
 };

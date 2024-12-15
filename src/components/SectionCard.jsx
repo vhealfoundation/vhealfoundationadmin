@@ -6,12 +6,11 @@ const SectionCard = ({ section, onEdit, onDelete }) => {
   const { image, heading, subheading, description, features, reverse } = section;
 
   return (
-    <div className="relative  bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="p-6 relative  bg-white shadow-lg rounded-lg overflow-hidden">
       {/* Section Image */}
-      <img src={image}  className="w-full h-48 object-cover" />
+      <img src={image}  className="w-full h-40 object-cover rounded-md" />
 
-     <div className="px-6 py-3">
-     <div className="mb-3">
+      <div className="my-4">
         <h3 className="text-xl font-bold text-gray-800">{heading}</h3>
         <h4 className="text-gray-600 mt-2">{subheading}</h4>
 
@@ -31,15 +30,14 @@ const SectionCard = ({ section, onEdit, onDelete }) => {
       {/*Reverse */}
       {reverse ? (
         <div className="bg-gray-100 p-4 rounded-lg mt-4 mb-14">
-          <p className="mt-2 text-gray-800">Reverse: True</p>
+          <p className="text-gray-800">Reverse: True</p>
         </div>
       ): (
         <div className="bg-gray-100 p-4 rounded-lg mt-4 mb-14 ">
-          <p className="mt-2 text-gray-800">Reverse: False</p>
+          <p className="text-gray-800">Reverse: False</p>
         </div>
       )}
 
-     </div>
 
       {/* Action Buttons */}
       <div className="absolute bottom-4 right-6 flex justify-end gap-4">
