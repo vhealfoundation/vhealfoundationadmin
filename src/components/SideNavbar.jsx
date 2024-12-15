@@ -63,14 +63,14 @@ const SideNavbar = () => {
           collapsed={isCollapsed}
         />
         </Link>
-        <Link to ='/section'>
+        <Link to ='/sections'>
         <NavItem
           icon={<MdOutlineCategory size={24} />}
           label="Section"
           collapsed={isCollapsed}
         />
         </Link>
-        <Link to ='/story'>
+        <Link to ='/stories'>
         <NavItem
           icon={<BsPersonLinesFill size={24} />}
           label="Story"

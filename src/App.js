@@ -11,9 +11,11 @@ import AddAbout from "./pages/AddAbout";
 import EditAbout from "./pages/EditAbout";
 import Donations from "./pages/Donations";
 import Section from "./pages/Section";
-import Story from "./pages/Story";
 import AddSection from "./pages/AddSection";
 import EditSection from "./pages/EditSection";
+import Stories from "./pages/Stories";
+import AddStories from "./pages/AddStories";
+import EditStories from "./pages/EditStories";
 
 function App() {
   const location = useLocation();
@@ -32,7 +34,9 @@ function App() {
           <Route path="/sections" element={<Section />} />
           <Route path="/sections/new" element={<AddSection />} />
           <Route path="/sections/:id" element={<EditSection />} />
-          <Route path="/story" element={<Story />} />a
+          <Route path="/stories" element={<Stories />} />
+          <Route path="/stories/new" element={<AddStories />} />
+          <Route path="/stories/:id" element={<EditStories />} />
           </Routes>
       </AnimatePresence>
     </div>
