@@ -7,13 +7,6 @@ const AboutCard = ({ about, onDelete }) => {
   const navigate = useNavigate(); // React Router navigation hook
   const [showModal, setShowModal] = React.useState(false); // State to toggle modal visibility
 
-  const handleEdit = () => {
-    navigate(`/about/${about._id}`); // Redirect to the edit pages
-  };
-
-  const handleDelete = () => {
-    setShowModal(true); // Show the confirmation modal
-  };
 
   return (
     <div className="p-6 relative  bg-white shadow-lg rounded-lg overflow-hidden">

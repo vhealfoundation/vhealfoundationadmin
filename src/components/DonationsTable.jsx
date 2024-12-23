@@ -1,22 +1,13 @@
 import React, { useState } from "react";
-import { AiOutlineDelete } from "react-icons/ai";
+// import { AiOutlineDelete } from "react-icons/ai";
+// import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 
-// Sample data for donations (you can replace it with dynamic data from your API)
-const donationsData = [
-  { id: 1, name: "John Doe", email: "john@example.com", phone: "1234567890", amount: 500, beneficiary: "Charity A", status: "Paid" },
-  { id: 2, name: "Jane Smith", email: "jane@example.com", phone: "0987654321", amount: 300, beneficiary: "Charity B", status: "Pending" },
-  { id: 3, name: "Alex Johnson", email: "alex@example.com", phone: "1122334455", amount: 1000, beneficiary: "Charity C", status: "Paid" },
-  // Add more data as needed
-];
 
-const DonationsTable = () => {
+const DonationsTable = ({ donationsData }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  // const [showModal, setShowModal] = React.useState(false);
   const itemsPerPage = 5;
 
-  const handleDelete = (id) => {
-    // Handle deletion logic here (e.g., remove from state or API call)
-    console.log("Deleted donation with ID:", id);
-  };
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -38,33 +29,42 @@ const DonationsTable = () => {
             <th className="py-3 px-4 text-left">Amount</th>
             <th className="py-3 px-4 text-left">Beneficiary</th>
             <th className="py-3 px-4 text-left">Status</th>
-            <th className="py-3 px-4 text-left">Action</th>
+            {/* <th className="py-3 px-4 text-left">Action</th> */}
           </tr>
         </thead>
         <tbody>
           {currentItems.map((donation, index) => (
-            <tr key={donation.id} className="border-b border-gray-200">
-              <td className="py-3 px-4">{indexOfFirstItem + index + 1}</td>
-              <td className="py-3 px-4">{donation.name}</td>
-              <td className="py-3 px-4">{donation.email}</td>
-              <td className="py-3 px-4">{donation.phone}</td>
-              <td className="py-3 px-4">${donation.amount}</td>
-              <td className="py-3 px-4">{donation.beneficiary}</td>
-              <td className="py-3 px-4">
-                <span
-                  className={`py-1 px-3 rounded-full ${
-                    donation.status === "Paid" ? "bg-green-500" : "bg-yellow-500"
-                  } text-white`}
-                >
-                  {donation.status}
-                </span>
-              </td>
-              <td className="py-3 px-4">
-                <button onClick={() => handleDelete(donation.id)} className="text-red-500 hover:text-red-700">
-                  <AiOutlineDelete size={20} />
-                </button>
-              </td>
-            </tr>
+            <>
+              <tr key={donation._id} className={`border-b ${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}>
+                <td className="py-3 px-4">{indexOfFirstItem + index + 1}</td>
+                <td className="py-3 px-4">{donation?.name}</td>
+                <td className="py-3 px-4">{donation?.email}</td>
+                <td className="py-3 px-4">{donation?.phone}</td>
+                <td className="py-3 px-4">{donation?.amount}</td>
+                <td className="py-3 px-4">{donation?.beneficiary.name}</td>
+                <td className="py-3 px-4">
+                  <span
+                    className={`py-1 px-3 rounded-full ${donation.status === "Paid" ? "bg-green-500" : "bg-yellow-500"
+                      } text-white`}
+                  >
+                    {donation.status}
+                  </span>
+                </td>
+                {/* <td className="py-3 px-4">
+                  <button onClick={() => setShowModal(true)} className="text-red-500 hover:text-red-700">
+                    <AiOutlineDelete size={20} />
+                  </button>
+                </td> */}
+              </tr>
+             
+              {/* {showModal && (
+                <ConfirmDeleteModal
+                  isOpen={showModal}
+                  onConfirm={() => onDelete(donation._id)}
+                  onCancel={() => setShowModal(false)}
+                />
+              )} */}
+            </>
           ))}
         </tbody>
       </table>
@@ -86,9 +86,8 @@ const DonationsTable = () => {
               <li key={index}>
                 <button
                   onClick={() => paginate(index + 1)}
-                  className={`px-4 py-2 rounded-lg ${
-                    currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
-                  } hover:bg-blue-400`}
+                  className={`px-4 py-2 rounded-lg ${currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
+                    } hover:bg-blue-400`}
                 >
                   {index + 1}
                 </button>
@@ -106,6 +105,7 @@ const DonationsTable = () => {
           </ul>
         </nav>
       </div>
+
     </div>
   );
 };

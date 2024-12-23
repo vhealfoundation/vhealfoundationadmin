@@ -21,6 +21,9 @@ import AddStories from "./pages/AddStories";
 import EditStories from "./pages/EditStories";
 import Gallery from "./pages/Gallery";
 import Login from "./pages/Login";
+import Beneficiaries from "./pages/Beneficiaries";
+import AddBeneficiaries from "./pages/AddBeneficiaries";
+import EditBeneficiaries from "./pages/EditBeneficiaries";
 
 function App() {
   const location = useLocation();
@@ -43,6 +46,9 @@ function App() {
 
           {/* Protected routes */}
           <Route path="/dashboard" element={<ProtectedRoute element={Dashboard} />} />
+          <Route path="/beneficiaries" element={<ProtectedRoute element={Beneficiaries} />} />
+          <Route path="/beneficiary/new" element={<ProtectedRoute element={AddBeneficiaries} />} />
+          <Route path="/beneficiary/:id" element={<ProtectedRoute element={EditBeneficiaries} />} />
           <Route path="/about" element={<ProtectedRoute element={About} />} />
           <Route path="/about/new" element={<ProtectedRoute element={AddAbout} />} />
           <Route path="/about/:id" element={<ProtectedRoute element={EditAbout} />} />

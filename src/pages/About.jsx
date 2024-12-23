@@ -52,7 +52,7 @@ const About = () => {
           Add New
         </button>
       </div>
- 
+
       {/* Display loading state, error state, or AboutCard */}
       {loading ? (
         <Loader />

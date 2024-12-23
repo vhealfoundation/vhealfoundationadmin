@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { AiOutlineDashboard, AiOutlineLogout } from "react-icons/ai";
-import { FaDonate, FaImages, FaInfoCircle } from "react-icons/fa";
+import { FaDonate, FaImages, FaInfoCircle, FaUsers } from "react-icons/fa";
 import { MdOutlineCategory } from "react-icons/md";
 import { BsPersonLinesFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
@@ -72,6 +72,14 @@ const SideNavbar = () => {
             collapsed={isCollapsed}
           />
         </Link>
+        <Link to="/beneficiaries">
+          <NavItem
+            icon={<FaUsers size={24} />}
+            label="Beneficiaries"
+            collapsed={isCollapsed}
+          />
+        </Link>
+        
         <Link to="/about">
           <NavItem
             icon={<FaInfoCircle size={24} />}
