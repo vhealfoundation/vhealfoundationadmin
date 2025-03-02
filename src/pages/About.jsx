@@ -3,67 +3,92 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Layout from "../hoc/Layout";
-import AboutCard from "../components/AboutCard";
+import SectionCard from "../components/SectionCard"; // Reusing the same SectionCard component
 import Loader from "../components/Loader";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import { FaPlus } from "react-icons/fa";
 
 const About = () => {
-  const [aboutData, setAboutData] = useState([]);
+  const [aboutCards, setAboutCards] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedAboutCard, setSelectedAboutCard] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch About data on component mount
+  // Fetch AboutCard data on component mount
   useEffect(() => {
-    const fetchAboutData = async () => {
+    const fetchAboutCards = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/aboutcards`);
-        setAboutData(response.data.data);
+        setAboutCards(response.data.data);
         setLoading(false);
       } catch (err) {
-        setError("Error fetching data");
+        setError("Error fetching AboutCards data");
         setLoading(false);
       }
     };
 
-    fetchAboutData();
+    fetchAboutCards();
   }, []);
 
-  const handleDelete = async (id) => {
+  // Delete an AboutCard
+  const deleteAboutCard = async (id) => {
     try {
       await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/aboutcards/${id}`);
-      setAboutData((prevData) => prevData.filter((about) => about._id !== id));
-      toast.success("About card deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting about card:", error);
+      setAboutCards(aboutCards.filter((aboutCard) => aboutCard._id !== id));
+      toast.success("AboutCard deleted successfully!");
+    } catch (err) {
+      console.error("Error deleting AboutCard:", err);
     }
   };
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">About</h1>
+
+        {/* Add New AboutCard Button */}
         <button
-          onClick={() => navigate("/about/new")}
           className="flex items-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+          onClick={() => navigate("/about/new")}
         >
           <FaPlus className="mr-2" />
-
-          Add New
+          Add New AboutCard
         </button>
       </div>
 
-      {/* Display loading state, error state, or AboutCard */}
+      {/* Display loading or AboutCards */}
       {loading ? (
         <Loader />
-      ) : error ? (
-        <p className="text-red-500">{error}</p>
       ) : (
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {aboutData.map((about) => (
-            <AboutCard key={about._id} about={about} onDelete={handleDelete} />
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {aboutCards?.map((aboutCard) => (
+            <SectionCard
+              key={aboutCard._id}
+              section={aboutCard} // Reusing SectionCard component for AboutCard
+              onDelete={(aboutCard) => {
+                setSelectedAboutCard(aboutCard);
+                setShowModal(true);
+              }}
+              onEdit={(aboutCard) => {
+                navigate(`/about/${aboutCard._id}`);
+              }}
+            />
           ))}
         </div>
+      )}
+
+      {/* Confirm Delete Modal */}
+      {showModal && selectedAboutCard && (
+        <ConfirmDeleteModal
+          isOpen={showModal}
+          onConfirm={() => {
+            deleteAboutCard(selectedAboutCard._id); // Pass the selected AboutCard's _id to the delete function
+            setShowModal(false); // Close the modal after confirming
+          }}
+          onCancel={() => setShowModal(false)} // Close the modal when cancelled
+        />
       )}
     </div>
   );

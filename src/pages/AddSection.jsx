@@ -24,7 +24,6 @@ const AddSection = () => {
     e.preventDefault();
     if (
       !formData.image ||
-      !formData.alt ||
       !formData.heading ||
       !formData.subheading ||
       !formData.description ||

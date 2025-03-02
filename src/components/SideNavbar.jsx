@@ -9,9 +9,6 @@ import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 const SideNavbar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { user, logout } = useKindeAuth();
-
-  console.log(user);
-
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
   };
@@ -19,7 +16,7 @@ const SideNavbar = () => {
   return (
     <div
       className={`z-10 flex flex-col h-screen bg-gray-900 text-white transition-all duration-300 ease-in-out 
-        ${isCollapsed ? "w-20" : "w-[232px]"}`}
+        ${isCollapsed ? "w-16" : "w-[232px]"}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
@@ -31,7 +28,7 @@ const SideNavbar = () => {
         </h1>
         <button
           onClick={toggleCollapse}
-          className="text-gray-400 hover:text-white focus:outline-none"
+          className="text-gray-400 hover:text-white focus:outline-none ml-2"
         >
           {isCollapsed ? "→" : "←"}
         </button>
@@ -39,7 +36,7 @@ const SideNavbar = () => {
 
       {/* User Info */}
       <div
-        className={`flex items-center p-4 border-b border-gray-700 ${
+        className={`flex items-center p-2 border-b border-gray-700 ${
           isCollapsed ? "justify-center" : ""
         }`}
       >
@@ -57,7 +54,7 @@ const SideNavbar = () => {
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex flex-col mt-4 space-y-2">
+      <nav className="flex flex-col">
         <Link to="/dashboard">
           <NavItem
             icon={<AiOutlineDashboard size={24} />}
@@ -97,7 +94,7 @@ const SideNavbar = () => {
         <Link to="/sections">
           <NavItem
             icon={<MdOutlineCategory size={24} />}
-            label="Section"
+            label="What We Do"
             collapsed={isCollapsed}
           />
         </Link>
@@ -105,6 +102,20 @@ const SideNavbar = () => {
           <NavItem
             icon={<BsPersonLinesFill size={24} />}
             label="Story"
+            collapsed={isCollapsed}
+          />
+        </Link>
+        <Link to="/appointments">
+          <NavItem
+            icon={<BsPersonLinesFill size={24} />}
+            label="Appoinments"
+            collapsed={isCollapsed}
+          />
+        </Link>
+        <Link to="/slots">
+          <NavItem
+            icon={<BsPersonLinesFill size={24} />}
+            label="Slots"
             collapsed={isCollapsed}
           />
         </Link>
@@ -122,7 +133,7 @@ const SideNavbar = () => {
 
 const NavItem = ({ icon, label, collapsed }) => {
   return (
-    <div className="flex items-center p-3 text-gray-300 hover:text-white hover:bg-gray-700 cursor-pointer">
+    <div className="flex items-center p-2 text-gray-300 hover:text-white hover:bg-gray-700 cursor-pointer">
       <div className="flex items-center justify-center w-10 h-10">{icon}</div>
       {!collapsed && <span className="ml-3 text-sm font-medium">{label}</span>}
     </div>

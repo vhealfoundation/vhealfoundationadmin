@@ -30,7 +30,6 @@ const EditBeneficiaries = () => {
 
     fetchBeneficiaryData();
   }, [id]);
-  console.log(beneficiary);
 
   const handleFormSubmit = async (updatedBeneficiary) => {
     // Update the beneficiary data using PUT request

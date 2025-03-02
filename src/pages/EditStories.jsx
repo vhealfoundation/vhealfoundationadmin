@@ -40,8 +40,7 @@ const EditStories = () => {
   };
 
   const handleCancel = () => {
-    // Logic for canceling, e.g., redirecting or showing a list of stories
-    console.log("Edit canceled");
+
   };
 
   if (loading) return <div>Loading...</div>;

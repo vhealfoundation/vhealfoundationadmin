@@ -54,7 +54,7 @@ const EditSection = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold">Edit Section</h1>
+      <h1 className="text-3xl font-bold">Edit What We Do</h1>
       <div>
         {section && (
           <EditSectionCard

@@ -53,8 +53,6 @@ const AddAboutCard = ({ formData, onFormChange, onSubmit, onCancel }) => {
 
       // Upload the image to Cloudinary
       const { url, public_id } = await uploadImageToCloudinary(file);
-      console.log("Uploaded image URL:", url);
-
       if (index !== null) {
         // Update the content image URL and publicId
         const updatedContent = [...formData.content];

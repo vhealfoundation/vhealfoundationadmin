@@ -46,7 +46,7 @@ const Sections = () => {
   return (
     <div className="p-6">
       <div className="flex items-center justify-between">
-      <h1 className="text-3xl font-bold">Sections</h1>
+      <h1 className="text-3xl font-bold">What We Do</h1>
       
 
       {/* Add New Section Button */}

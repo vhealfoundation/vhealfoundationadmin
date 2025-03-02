@@ -50,7 +50,6 @@ const AddBeneficiariesCard = ({ onFormChange, onSubmit, onCancel }) => {
 
       // Upload the image to Cloudinary
       const { url, public_id } = await uploadImageToCloudinary(file);
-      console.log("Uploaded image URL:", url);
 
       // Update formData with the uploaded image URL and publicId
       const newFormData = { ...formData, image: url, publicId: public_id };

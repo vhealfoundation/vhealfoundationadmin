@@ -24,11 +24,14 @@ import Login from "./pages/Login";
 import Beneficiaries from "./pages/Beneficiaries";
 import AddBeneficiaries from "./pages/AddBeneficiaries";
 import EditBeneficiaries from "./pages/EditBeneficiaries";
+import Appointments from "./pages/Appointments";
+import AddSlot from "./pages/AddSlot";
+import Slots from "./pages/Slots";
+import EditSlot from "./pages/EditSlot";
 
 function App() {
   const location = useLocation();
   const { isAuthenticated } = useKindeAuth();
-  console.log(isAuthenticated);
   return (
     <div>
       <AnimatePresence>
@@ -60,6 +63,10 @@ function App() {
           <Route path="/stories" element={<ProtectedRoute element={Stories} />} />
           <Route path="/stories/new" element={<ProtectedRoute element={AddStories} />} />
           <Route path="/stories/:id" element={<ProtectedRoute element={EditStories} />} />
+          <Route path="/appointments" element={<ProtectedRoute element={Appointments} />} />
+          <Route path="/slots" element={<ProtectedRoute element={Slots} />} />
+          <Route path="/slots/new" element={<ProtectedRoute element={AddSlot} />} />
+          <Route  path="/slots/:date/:slotId" element={<ProtectedRoute element={EditSlot} />} />
         </Routes>
       </AnimatePresence>
     </div>
