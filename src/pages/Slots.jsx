@@ -25,7 +25,7 @@ const Slot = () => {
     useEffect(() => {
         const fetchSlots = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/appointments`);
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/slots`);
                 const formattedSlots = response.data.data.map(slot => ({
                     ...slot,
                     date: moment(slot.date).format("DD-MM-YYYY") // Format date to DD-MM-YYYY
@@ -73,6 +73,7 @@ const Slot = () => {
 
         setFilteredSlots(filtered);
     }, [selectedMonth, searchDate, slots]);
+    console.log(filteredSlots);
 
     return (
         <div className="p-6">

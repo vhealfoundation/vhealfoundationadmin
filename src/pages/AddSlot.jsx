@@ -37,7 +37,7 @@ const AddSlot = () => {
 
       setLoading(false);
       toast.success("Slot added successfully!");
-      navigate("/appointments");
+      navigate("/slots");
     } catch (err) {
       setLoading(false);
       console.error("Error adding slot:", err);

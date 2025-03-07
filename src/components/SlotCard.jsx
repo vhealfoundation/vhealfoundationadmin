@@ -2,33 +2,41 @@ import React from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 const SlotCard = ({ slot, onEdit, onDelete }) => {
-  const { date, time, booked, userDetails, paymentStatus, completed } = slot;
+  const { date, slots } = slot;
+
+  // Calculate total slots and booked slots
+  const totalSlots = slots.length;
+  const bookedSlots = slots.filter((s) => s.booked).length;
 
   return (
-    <div className="p-6 relative bg-white shadow-lg rounded-lg overflow-hidden">
-      {/* Slot Date & Time */}
-      <div className="my-4">
+    <div className="w-3/4 p-3 relative bg-white shadow-lg rounded-lg overflow-hidden">
+      {/* Slot Date */}
+      <div className="mb-2 ">
         <h3 className="text-xl font-bold text-gray-800">{date}</h3>
-        <h4 className="text-gray-600 mt-2">{time}</h4>
+        <p className="text-gray-600 mt-2">
+          Total Slots: {totalSlots} | Booked: {bookedSlots}
+        </p>
       </div>
 
-      {/* Slot Details */}
-      <div className="bg-gray-100 p-4 rounded-lg mb-4">
-        <p className="text-gray-800">Booked: {booked ? "Yes" : "No"}</p>
-        <p className="text-gray-800">Payment: {paymentStatus}</p>
-        <p className="text-gray-800">Completed: {completed ? "Yes" : "No"}</p>
+      {/* Slot Timings List */}
+      <div className="bg-gray-100 p-3 rounded-lg mb-[59px]">
+        {slots.map((slotItem, index) => (
+          <React.Fragment key={slotItem._id}>
+            <div className="flex justify-between py-2">
+              <p className="text-gray-800 font-medium">{slotItem.time}</p>
+              <p className={`text-sm font-medium ${slotItem.booked ? "text-red-500" : "text-green-500"}`}>
+                {slotItem.booked ? "Booked" : "Available"}
+              </p>
+            </div>
+            {index < slots.length - 1 && (
+              <div className="border-b border-gray-300 my-1 w-full"></div>
+            )}
+          </React.Fragment>
+        ))}
       </div>
-
-      {/* User Details (if booked) */}
-      {booked && userDetails?.name && (
-        <div className="bg-gray-100 p-4 rounded-lg mt-4 mb-14">
-          <p className="text-gray-800">User: {userDetails.name}</p>
-          <p className="text-gray-800">Email: {userDetails.email}</p>
-        </div>
-      )}
 
       {/* Action Buttons */}
-      <div className="absolute bottom-4 right-6 flex justify-end gap-4">
+      <div className="absolute bottom-4 right-3 flex justify-end gap-4">
         <button
           onClick={() => onEdit(slot)}
           className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"

@@ -7,7 +7,6 @@ import { FaTimes, FaPlus } from "react-icons/fa";
 const AddSlotCard = ({ formData, onFormChange, onSubmit, onCancel, loading }) => {
   const [selectedTimes, setSelectedTimes] = useState([]);
 
-  // Helper function to format date using local date values in YYYY-MM-DD format
   const formatDate = (date) => {
     const year = date.getFullYear();
     // getMonth returns index starting at 0; add 1 and pad with zero if needed
@@ -75,7 +74,7 @@ const AddSlotCard = ({ formData, onFormChange, onSubmit, onCancel, loading }) =>
           multiple
           value={selectedTimes}
           onChange={handleTimeChange}
-          className="w-full border border-gray-300 rounded-md p-2 bg-gray-50"
+          className="w-1/2 border border-gray-300 rounded-md bg-gray-50"
           displayEmpty
         >
           <MenuItem disabled value="">

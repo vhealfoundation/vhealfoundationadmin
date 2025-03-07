@@ -8,10 +8,11 @@ import Layout from "../hoc/Layout";
 
 const EditSlot = () => {
   const { date } = useParams();
-  const navigate = useNavigate();
   const [slots, setSlots] = useState([]);
+  const [removedSlots, setRemovedSlots] = useState([]); // Track removed slot IDs
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   // Format date to YYYY-MM-DD
   const formatDate = (inputDate) => {
@@ -25,20 +26,16 @@ const EditSlot = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        console.log("Fetching appointment for date:", formattedDate);
-
+        console.log("Fetching slots for date:", formattedDate);
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_URL}/appointments/${formattedDate}`
         );
-
         console.log("Fetched Data:", response.data);
-
-        if (!response.data || !response.data.slot.slots) {
+        if (!response.data || !response.data.slot || !response.data.slot.slots) {
           setError("No slots found for this date");
           setLoading(false);
           return;
         }
-
         setSlots(response.data.slot.slots);
         setLoading(false);
       } catch (err) {
@@ -47,80 +44,78 @@ const EditSlot = () => {
         setLoading(false);
       }
     };
-
     fetchAppointments();
   }, [formattedDate]);
 
   console.log("All Slots:", slots);
 
-  // Handle updating a specific slot
-  const handleUpdate = async (updatedSlot) => {
+  // Handle updating slots
+  const handleUpdate = async ({ newSlots, existingSlots }) => {
     try {
-      console.log("Updating slot:", updatedSlot);
-
-      await axios.put(
-        `${process.env.REACT_APP_BACKEND_URL}/slots/${formattedDate}/${updatedSlot._id}`,
-        {
-          time: updatedSlot.time, // Send only the updated time
-        }
+      for (const slot of existingSlots) {
+        if (!slot._id) continue;
+        await axios.put(
+          `${process.env.REACT_APP_BACKEND_URL}/slots/${formattedDate}/${slot._id}`,
+          {
+            time: slot.time,
+            remove: false,
+            userDetails: slot.userDetails,
+            paymentStatus: slot.paymentStatus,
+            completed: slot.completed,
+          }
+        );
+      }
+  
+      for (const slot of newSlots) {
+        await axios.put(
+          `${process.env.REACT_APP_BACKEND_URL}/slots/${formattedDate}/new`,
+          {
+            time: slot.time,
+            remove: false,
+            userDetails: {},
+            paymentStatus: "pending",
+            completed: false,
+          }
+        );
+      }
+  
+      for (const slotId of removedSlots) {
+        await axios.put(
+          `${process.env.REACT_APP_BACKEND_URL}/slots/${formattedDate}/${slotId}`,
+          { remove: true }
+        );
+      }
+  
+      // Fetch updated slots after updating
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/appointments/${formattedDate}`
       );
-
-      // Update the UI state
-      setSlots((prevSlots) =>
-        prevSlots.map((s) =>
-          s._id === updatedSlot._id ? { ...s, time: updatedSlot.time } : s
-        )
-      );
-
-      toast.success("Slot updated successfully!");
+  
+      console.log("Updated slots after saving:", response.data.slot.slots);
+      setSlots(response.data.slot.slots);
+      setRemovedSlots([]);
+      toast.success("Slots updated successfully!");
+      navigate("/slots");
     } catch (err) {
-      toast.error("Failed to update slot");
+      toast.error("Failed to update slots");
       console.error(err);
     }
   };
-
-  // Handle removing a slot
-  const handleRemove = async (slotId) => {
-    try {
-      console.log("Removing slot:", slotId);
-
-      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/slots/${formattedDate}/${slotId}`);
-
-      setSlots((prevSlots) => prevSlots.filter((s) => s._id !== slotId));
-      toast.success("Slot removed successfully!");
-    } catch (err) {
-      toast.error("Failed to remove slot");
-      console.error(err);
-    }
-  };
-
-  // Handle adding a new slot
-  const handleAdd = async (newTime) => {
-    try {
-      console.log("Adding new slot:", newTime);
-
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/slots/${formattedDate}`, {
-        time: newTime,
-      });
-
-      setSlots((prevSlots) => [...prevSlots, response.data]);
-      toast.success("New slot added successfully!");
-    } catch (err) {
-      toast.error("Failed to add slot");
-      console.error(err);
-    }
-  };
+  
 
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold">Edit Slots</h1>
-
       {loading ? (
         <Loader />
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : (
-        <EditSlotCard slots={slots} onUpdate={handleUpdate} onRemove={handleRemove} onAdd={handleAdd} />
+        <EditSlotCard
+          slots={slots}
+          onSubmit={handleUpdate}
+          onRemove={(slotId) => setRemovedSlots((prev) => [...prev, slotId])}
+        />
       )}
     </div>
   );

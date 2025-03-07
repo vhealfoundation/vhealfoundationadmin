@@ -29,19 +29,12 @@ const navigate = useNavigate();
     fetchAppointments();
   }, []);
 
+  console.log(appointments);
   return (
     <div className="p-6">
        <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Appointments</h1>
 
-        {/* Add New AboutCard Button */}
-        <button
-          className="flex items-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
-          onClick={() => navigate("/slot/new")}
-        >
-          <FaPlus className="mr-2" />
-          Add New Slot
-        </button>
       </div>
 
       <div>

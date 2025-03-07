@@ -148,6 +148,10 @@ const AddSectionCard = ({ formData, onFormChange, onSubmit, onCancel, loading })
             name="description"
             value={formData.description}
             onChange={handleChange}
+            onInput={(e) => {
+              e.target.style.height = 'auto'; // Reset the height
+              e.target.style.height = `${e.target.scrollHeight}px`; // Set the height to the scroll height
+            }}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg"
             required
           />
