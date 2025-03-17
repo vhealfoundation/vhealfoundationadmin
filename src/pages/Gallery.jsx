@@ -3,27 +3,39 @@ import axios from "axios";
 import Layout from "../hoc/Layout";
 import GalleryCard from "../components/GalleryCard";
 import Loader from "../components/Loader";
-import {FaPlus } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import Modal from "../components/Modal";
+import { Tab } from '@headlessui/react';
 
+const CATEGORIES = [
+  "COUNSELLING SERVICES",
+  "ASSESSMENTS",
+  "TRAINING",
+  "COACHING",
+  "REHABILITAION OF PRISONERS",
+  "OTHER"
+];
 
 const Gallery = () => {
-  const [galleryData, setGalleryData] = useState([]);
+  const [galleryData, setGalleryData] = useState({ categories: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
+  const [imageCaption, setImageCaption] = useState("");
 
   // Fetch gallery data on component mount
   useEffect(() => {
     const fetchGalleryData = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/gallery`);
-        setGalleryData(response.data.data.images);
+        setGalleryData(response.data.data);
         setLoading(false);
       } catch (err) {
+        console.error("Error fetching gallery data:", err);
         setError("Error fetching gallery data");
         setLoading(false);
       }
@@ -60,7 +72,6 @@ const Gallery = () => {
   };
 
   // Handle image uploads when the "Upload" button is clicked
-  // Handle image uploads when the "Upload" button is clicked
   const handleImageUpload = async () => {
     if (selectedFiles.length === 0) return;
 
@@ -68,93 +79,254 @@ const Gallery = () => {
       setUploading(true); // Show upload message
       const uploadedUrls = await Promise.all(selectedFiles.map((file) => uploadImageToCloudinary(file)));
 
-      // Save uploaded images to the backend
-      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/gallery`, {
-        images: uploadedUrls.map((url) => ({ url })),
+      // Save uploaded images to the backend with category and caption
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/gallery/category/${selectedCategory}/images`, {
+        images: uploadedUrls.map((url) => ({ url, caption: imageCaption })),
       });
 
-      // Update gallery with new images
-      setGalleryData((prevData) => [...prevData, ...uploadedUrls.map((url) => ({ url }))]);
+      // Refresh gallery data
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/gallery`);
+      setGalleryData(response.data.data);
 
       // Reset the image previews and selected files after successful upload
       setImagePreviews([]); // Clear previews
       setSelectedFiles([]); // Clear selected files
+      setImageCaption(""); // Clear caption
       setShowModal(false); // Close modal
     } catch (error) {
       console.error("Image upload failed:", error);
+      setError("Failed to upload images. Please try again.");
     } finally {
       setUploading(false); // Hide upload message
     }
   };
 
-
   // Delete an image
-  const deleteImage = async (id) => {
+  const deleteImage = async (categoryTitle, imageId) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/gallery/${id}`);
-      setGalleryData((prevData) => prevData.filter((image) => image._id !== id));
+      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/gallery/category/${categoryTitle}/image/${imageId}`);
+      
+      // Update the state to reflect the deletion
+      setGalleryData(prevData => {
+        const updatedCategories = prevData.categories.map(category => {
+          if (category.title === categoryTitle) {
+            return {
+              ...category,
+              images: category.images.filter(img => img._id !== imageId)
+            };
+          }
+          return category;
+        });
+        
+        return {
+          ...prevData,
+          categories: updatedCategories
+        };
+      });
     } catch (err) {
       console.error("Error deleting image:", err);
+      setError("Failed to delete image. Please try again.");
     }
+  };
+
+  // Create a new category if it doesn't exist
+  const ensureCategoryExists = async (categoryTitle) => {
+    try {
+      // Check if category already exists in our state
+      const categoryExists = galleryData.categories.some(cat => cat.title === categoryTitle);
+      
+      if (!categoryExists) {
+        await axios.post(`${process.env.REACT_APP_BACKEND_URL}/gallery/category`, {
+          title: categoryTitle
+        });
+        
+        // Refresh gallery data
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/gallery`);
+        setGalleryData(response.data.data);
+      }
+    } catch (err) {
+      console.error("Error creating category:", err);
+    }
+  };
+
+  // When a category tab is selected
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    ensureCategoryExists(category);
+  };
+
+  // Find images for the current category
+  const getCategoryImages = (categoryTitle) => {
+    const category = galleryData.categories.find(cat => cat.title === categoryTitle);
+    return category ? category.images : [];
   };
 
   return (
     <div className="p-6">
       {loading && <Loader />}
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Gallery</h1>
-
-        {error && <p className="text-red-500">{error}</p>}
+      
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Gallery Management</h1>
 
         <button
           onClick={() => setShowModal(true)}
           className="flex items-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
         >
           <FaPlus className="mr-2" />
-
-          Add New
+          Add New Images
         </button>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {galleryData?.map((image) => (
-          <GalleryCard key={image._id} image={image} onDelete={deleteImage} />
-        ))}
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
+
+      <div className="mb-6">
+        <Tab.Group>
+          <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1">
+            {CATEGORIES.map((category) => (
+              <Tab
+                key={category}
+                onClick={() => handleCategoryChange(category)}
+                className={({ selected }) =>
+                  `w-full rounded-lg py-2.5 text-sm font-medium leading-5 
+                  ${selected 
+                    ? 'bg-white text-blue-700 shadow' 
+                    : 'text-gray-700 hover:bg-white/[0.12] hover:text-blue-600'
+                  }`
+                }
+              >
+                {category}
+              </Tab>
+            ))}
+          </Tab.List>
+          <Tab.Panels className="mt-2">
+            {CATEGORIES.map((category) => (
+              <Tab.Panel key={category} className="rounded-xl bg-white p-3">
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                  {getCategoryImages(category).length > 0 ? (
+                    getCategoryImages(category).map((image) => (
+                      <GalleryCard 
+                        key={image._id} 
+                        image={image} 
+                        category={category}
+                        onDelete={deleteImage} 
+                      />
+                    ))
+                  ) : (
+                    <p className="col-span-3 text-center text-gray-500 py-10">
+                      No images in this category. Click "Add New Images" to upload.
+                    </p>
+                  )}
+                </div>
+              </Tab.Panel>
+            ))}
+          </Tab.Panels>
+        </Tab.Group>
       </div>
 
       {/* Modal for Uploading */}
       {showModal && (
         <Modal onClose={() => setShowModal(false)}>
-          <h2 className="text-xl font-bold mb-4">Upload Images</h2>
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleFileChange} // Update the previews on file selection
-            className="mb-4"
-          />
-          {imagePreviews.length > 0 && (
-            <div className="grid grid-cols-2 gap-4">
-              {imagePreviews.map((preview, index) => (
-                <img
-                  key={index}
-                  src={preview}
-                  alt={`Preview ${index}`}
-                  className="w-full h-32 object-cover rounded-lg shadow-md"
-                />
+          <h2 className="text-xl font-bold mb-4">Upload Images to {selectedCategory}</h2>
+          
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Select Category:
+            </label>
+            <select 
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            >
+              {CATEGORIES.map(category => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
               ))}
+            </select>
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Image Caption (optional):
+            </label>
+            <input
+              type="text"
+              value={imageCaption}
+              onChange={(e) => setImageCaption(e.target.value)}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="Enter a caption for all images"
+            />
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Select Images:
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleFileChange}
+              className="block w-full text-sm text-gray-500
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-full file:border-0
+                file:text-sm file:font-semibold
+                file:bg-blue-50 file:text-blue-700
+                hover:file:bg-blue-100"
+            />
+          </div>
+          
+          {imagePreviews.length > 0 && (
+            <div className="mt-4">
+              <p className="text-sm font-medium text-gray-700 mb-2">Image Previews:</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {imagePreviews.map((preview, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={preview}
+                      alt={`Preview ${index}`}
+                      className="w-full h-32 object-cover rounded-lg shadow-md"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
-          {uploading ? (
-            <p className="mt-4 text-blue-500">Uploading images, please wait...</p>
-          ) : (
+          
+          <div className="mt-6 flex justify-end">
+            <button
+              onClick={() => setShowModal(false)}
+              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded mr-2"
+            >
+              Cancel
+            </button>
+            
             <button
               onClick={handleImageUpload}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4"
+              disabled={uploading || selectedFiles.length === 0}
+              className={`${
+                uploading || selectedFiles.length === 0
+                  ? "bg-blue-300 cursor-not-allowed"
+                  : "bg-blue-500 hover:bg-blue-700"
+              } text-white font-bold py-2 px-4 rounded flex items-center`}
             >
-              Upload
+              {uploading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Uploading...
+                </>
+              ) : (
+                "Upload Images"
+              )}
             </button>
-          )}
+          </div>
         </Modal>
       )}
     </div>

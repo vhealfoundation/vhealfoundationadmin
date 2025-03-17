@@ -141,7 +141,7 @@ const EditSectionCard = ({ section, onUpdate, onCancel }) => {
         </div>
 
         {/* Alt Text */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label htmlFor="alt" className="block text-gray-700">Alt Text</label>
           <input
             type="text"
@@ -151,7 +151,7 @@ const EditSectionCard = ({ section, onUpdate, onCancel }) => {
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg"
           />
-        </div>
+        </div> */}
 
         {/* Heading */}
         <div className="mb-4">
@@ -188,8 +188,8 @@ const EditSectionCard = ({ section, onUpdate, onCancel }) => {
             value={formData.description}
             onChange={handleChange}
             onInput={(e) => {
-              e.target.style.height = 'auto'; // Reset the height
-              e.target.style.height = `${e.target.scrollHeight}px`; // Set the height to the scroll height
+              e.target.style.height = 'auto'; 
+              e.target.style.height = `${e.target.scrollHeight}px`; 
             }}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg"
             rows={4}
@@ -199,7 +199,7 @@ const EditSectionCard = ({ section, onUpdate, onCancel }) => {
 
         {/* Features */}
         <div className="mb-4">
-          <label className="block text-gray-700">Features</label>
+          <label className="block text-gray-700">Details</label>
           {formData.features.map((feature, index) => (
             <div key={index} className="my-2 flex items-center gap-4">
               <input
@@ -224,7 +224,7 @@ const EditSectionCard = ({ section, onUpdate, onCancel }) => {
             onClick={addFeature}
             className="mt-2 flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 mb-4"
           > <FaPlus className="mr-2" />
-            Add Feature
+            Add Detail
           </button>
         </div>
 
