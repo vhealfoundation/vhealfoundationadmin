@@ -5,7 +5,7 @@ const EditStoriesCard = ({ story, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
     coverimage: "",
     title: "",
-    description: "",
+    /*  description: "", */
     content: [],
   });
   const [uploading, setUploading] = useState(false);
@@ -25,10 +25,10 @@ const EditStoriesCard = ({ story, onSave, onCancel }) => {
   const uploadImageToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "dymphnafoundation_gallery"); // Replace with your Cloudinary preset
+    formData.append("upload_preset", "vhealfoundation_gallery"); // Replace with your Cloudinary preset
 
     try {
-      const response = await fetch("https://api.cloudinary.com/v1_1/drgmx7x3w/image/upload", {
+      const response = await fetch("https://api.cloudinary.com/v1_1/dgidetrcl/image/upload", {
         method: "POST",
         body: formData,
       });
@@ -98,7 +98,6 @@ const EditStoriesCard = ({ story, onSave, onCancel }) => {
 
   return (
     <div className="mt-4 bg-white shadow-lg rounded-lg p-6 mb-6">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">Edit Story</h2>
 
       {/* Cover Image */}
       <div className="mb-4">
@@ -133,7 +132,7 @@ const EditStoriesCard = ({ story, onSave, onCancel }) => {
       </div>
 
       {/* Description */}
-      <div className="mb-4">
+      {/*  <div className="mb-4">
         <label htmlFor="description" className="block text-gray-700">Description</label>
         <textarea
           id="description"
@@ -142,7 +141,7 @@ const EditStoriesCard = ({ story, onSave, onCancel }) => {
           onChange={handleChange}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg"
         />
-      </div>
+      </div> */}
 
       {/* Content Sections */}
       <div className="mb-4">
@@ -184,9 +183,14 @@ const EditStoriesCard = ({ story, onSave, onCancel }) => {
               <textarea
                 value={section.description}
                 onChange={(e) => handleContentChange(index, "description", e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                onInput={(e) => {
+                  e.target.style.height = 'auto'; // Reset the height
+                  e.target.style.height = `${e.target.scrollHeight}px`; // Set the height to the scroll height
+                }}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg resize-none overflow-hidden"
               />
             </div>
+
 
             {/* Remove Content Button */}
             <button

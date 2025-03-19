@@ -101,7 +101,7 @@ const SideNavbar = () => {
         <Link to="/stories">
           <NavItem
             icon={<BsPersonLinesFill size={24} />}
-            label="Story"
+            label="Accolades"
             collapsed={isCollapsed}
           />
         </Link>

@@ -10,12 +10,12 @@ const AddAboutCard = ({ formData, onFormChange, onSubmit, onCancel }) => {
   const uploadImageToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "dymphnafoundation_about"); // Your Cloudinary preset
+    formData.append("upload_preset", "vhealfoundation_about"); // Your Cloudinary preset
 
     setLoading(true); // Show loading when image is uploading
 
     const response = await fetch(
-      "https://api.cloudinary.com/v1_1/drgmx7x3w/image/upload",
+      "https://api.cloudinary.com/v1_1/dgidetrcl/image/upload",
       {
         method: "POST",
         body: formData,

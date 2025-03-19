@@ -43,20 +43,20 @@ const Stories = () => {
     <div className="p-6">
       {loading && <Loader />}
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Stories</h1>
+        <h1 className="text-3xl font-bold">Accolades</h1>
         <button
           onClick={() => navigate("/stories/new")} 
           className="flex items-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
         >
           <FaPlus className="mr-2" />
 
-          Add New Story
+          Add New
         </button>
       </div>
 
-      <div className="flex flex-wrap">
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {stories.map((story) => (
-          <div className="w-full md:w-1/2 lg:w-1/3">
+          <div className="w-full">
 
             <StoryCard
               key={story._id}

@@ -35,12 +35,12 @@ const EditSectionCard = ({ section, onUpdate, onCancel }) => {
   const uploadImageToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "dymphnafoundation_section"); // Cloudinary preset
+    formData.append("upload_preset", "vhealfoundation_section"); // Cloudinary preset
 
     setLoading(true); // Show loading during upload
 
     const response = await fetch(
-      "https://api.cloudinary.com/v1_1/drgmx7x3w/image/upload",
+      "https://api.cloudinary.com/v1_1/dgidetrcl/image/upload",
       {
         method: "POST",
         body: formData,

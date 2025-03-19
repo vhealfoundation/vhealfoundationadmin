@@ -54,7 +54,7 @@ const About = () => {
           onClick={() => navigate("/about/new")}
         >
           <FaPlus className="mr-2" />
-          Add New AboutCard
+          Add New
         </button>
       </div>
 

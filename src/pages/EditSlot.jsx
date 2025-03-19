@@ -26,11 +26,9 @@ const EditSlot = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        console.log("Fetching slots for date:", formattedDate);
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_URL}/appointments/${formattedDate}`
         );
-        console.log("Fetched Data:", response.data);
         if (!response.data || !response.data.slot || !response.data.slot.slots) {
           setError("No slots found for this date");
           setLoading(false);
@@ -46,8 +44,6 @@ const EditSlot = () => {
     };
     fetchAppointments();
   }, [formattedDate]);
-
-  console.log("All Slots:", slots);
 
   // Handle updating slots
   const handleUpdate = async ({ newSlots, existingSlots }) => {
@@ -91,7 +87,6 @@ const EditSlot = () => {
         `${process.env.REACT_APP_BACKEND_URL}/appointments/${formattedDate}`
       );
   
-      console.log("Updated slots after saving:", response.data.slot.slots);
       setSlots(response.data.slot.slots);
       setRemovedSlots([]);
       toast.success("Slots updated successfully!");

@@ -16,12 +16,12 @@ const AddBeneficiariesCard = ({ onFormChange, onSubmit, onCancel }) => {
   const uploadImageToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "dymphnafoundation_beneficiaries");
+    formData.append("upload_preset", "vhealfoundation_beneficiaries");
 
     setLoading(true); 
 
     const response = await fetch(
-      "https://api.cloudinary.com/v1_1/drgmx7x3w/image/upload",
+      "https://api.cloudinary.com/v1_1/dgidetrcl/image/upload",
       {
         method: "POST",
         body: formData,

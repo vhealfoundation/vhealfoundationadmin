@@ -5,7 +5,7 @@ const AddStoriesCard = ({ story, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
     coverimage: story.coverimage || "",
     title: story.title || "",
-    description: story.description || "",
+    /*     description: story.description || "", */
     content: story.content || [],
   });
   const [uploading, setUploading] = useState(false); // For upload status
@@ -14,10 +14,10 @@ const AddStoriesCard = ({ story, onSave, onCancel }) => {
   const uploadImageToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "dymphnafoundation_stories"); // Replace with your Cloudinary preset
+    formData.append("upload_preset", "vhealfoundation_stories"); // Replace with your Cloudinary preset
 
     try {
-      const response = await fetch("https://api.cloudinary.com/v1_1/drgmx7x3w/image/upload", {
+      const response = await fetch("https://api.cloudinary.com/v1_1/dgidetrcl/image/upload", {
         method: "POST",
         body: formData,
       });
@@ -123,7 +123,7 @@ const AddStoriesCard = ({ story, onSave, onCancel }) => {
       </div>
 
       {/* Description */}
-      <div className="mb-4">
+      {/*  <div className="mb-4">
         <label htmlFor="description" className="block text-gray-700">Description</label>
         <textarea
           id="description"
@@ -132,7 +132,7 @@ const AddStoriesCard = ({ story, onSave, onCancel }) => {
           onChange={handleChange}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg"
         />
-      </div>
+      </div> */}
 
       {/* Content Sections */}
       <div className="mb-4">
@@ -174,9 +174,14 @@ const AddStoriesCard = ({ story, onSave, onCancel }) => {
               <textarea
                 value={section.description}
                 onChange={(e) => handleContentChange(index, "description", e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                onInput={(e) => {
+                  e.target.style.height = "auto"; // Reset height to shrink if needed
+                  e.target.style.height = `${e.target.scrollHeight}px`; // Expand to fit content
+                }}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg resize-none overflow-hidden"
               />
             </div>
+
 
             {/* Remove Content Button */}
             <button

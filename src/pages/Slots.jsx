@@ -73,7 +73,6 @@ const Slot = () => {
 
         setFilteredSlots(filtered);
     }, [selectedMonth, searchDate, slots]);
-    console.log(filteredSlots);
 
     return (
         <div className="p-6">

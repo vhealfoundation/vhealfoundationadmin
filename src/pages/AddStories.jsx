@@ -17,7 +17,7 @@ const AddStories = ({ onCancel }) => {
   const [error, setError] = useState(null); // For handling errors
   const navigate = useNavigate(); // For navigation
   const handleSave = async (storyData) => {
-    if(!storyData.coverimage || !storyData.title || !storyData.description || storyData.content.length === 0){
+    if(!storyData.coverimage || !storyData.title  || storyData.content.length === 0){
       toast.error("Please fill all the fields");
       return;
       

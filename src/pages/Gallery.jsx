@@ -48,9 +48,9 @@ const Gallery = () => {
   const uploadImageToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "dymphnafoundation_gallery"); // Your Cloudinary preset
+    formData.append("upload_preset", "vhealfoundation_gallery"); // Your Cloudinary preset
 
-    const response = await fetch("https://api.cloudinary.com/v1_1/drgmx7x3w/image/upload", {
+    const response = await fetch("https://api.cloudinary.com/v1_1/dgidetrcl/image/upload", {
       method: "POST",
       body: formData,
     });
@@ -230,102 +230,111 @@ const Gallery = () => {
       {/* Modal for Uploading */}
       {showModal && (
         <Modal onClose={() => setShowModal(false)}>
-          <h2 className="text-xl font-bold mb-4">Upload Images to {selectedCategory}</h2>
-          
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Select Category:
-            </label>
-            <select 
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            >
-              {CATEGORIES.map(category => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Image Caption (optional):
-            </label>
-            <input
-              type="text"
-              value={imageCaption}
-              onChange={(e) => setImageCaption(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="Enter a caption for all images"
-            />
-          </div>
-          
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Select Images:
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleFileChange}
-              className="block w-full text-sm text-gray-500
-                file:mr-4 file:py-2 file:px-4
-                file:rounded-full file:border-0
-                file:text-sm file:font-semibold
-                file:bg-blue-50 file:text-blue-700
-                hover:file:bg-blue-100"
-            />
-          </div>
-          
-          {imagePreviews.length > 0 && (
-            <div className="mt-4">
-              <p className="text-sm font-medium text-gray-700 mb-2">Image Previews:</p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {imagePreviews.map((preview, index) => (
-                  <div key={index} className="relative group">
-                    <img
-                      src={preview}
-                      alt={`Preview ${index}`}
-                      className="w-full h-32 object-cover rounded-lg shadow-md"
-                    />
-                  </div>
-                ))}
+          <div className="flex flex-col">
+            {/* Fixed Header */}
+            <div className="sticky top-0 bg-white pb-4 z-10">
+              <h2 className="text-xl font-bold mb-4">Upload Images to {selectedCategory}</h2>
+
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                  Select Category:
+                </label>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                >
+                  {CATEGORIES.map(category => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                  Image Caption (optional):
+                </label>
+                <input
+                  type="text"
+                  value={imageCaption}
+                  onChange={(e) => setImageCaption(e.target.value)}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  placeholder="Enter a caption for all images"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                  Select Images:
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleFileChange}
+                  className="block w-full text-sm text-gray-500
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-full file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-blue-50 file:text-blue-700
+                    hover:file:bg-blue-100"
+                />
               </div>
             </div>
-          )}
-          
-          <div className="mt-6 flex justify-end">
-            <button
-              onClick={() => setShowModal(false)}
-              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded mr-2"
-            >
-              Cancel
-            </button>
-            
-            <button
-              onClick={handleImageUpload}
-              disabled={uploading || selectedFiles.length === 0}
-              className={`${
-                uploading || selectedFiles.length === 0
-                  ? "bg-blue-300 cursor-not-allowed"
-                  : "bg-blue-500 hover:bg-blue-700"
-              } text-white font-bold py-2 px-4 rounded flex items-center`}
-            >
-              {uploading ? (
-                <>
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Uploading...
-                </>
-              ) : (
-                "Upload Images"
-              )}
-            </button>
+
+            {/* Scrollable Content */}
+            {imagePreviews.length > 0 && (
+              <div className="mt-2 mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">Image Previews:</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  {imagePreviews.map((preview, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={preview}
+                        alt={`Preview ${index}`}
+                        className="w-full h-32 object-cover rounded-lg shadow-md"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Fixed Footer */}
+            <div className="sticky bottom-0 bg-white pt-4 border-t mt-4">
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded mr-2"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  onClick={handleImageUpload}
+                  disabled={uploading || selectedFiles.length === 0}
+                  className={`${
+                    uploading || selectedFiles.length === 0
+                      ? "bg-blue-300 cursor-not-allowed"
+                      : "bg-blue-500 hover:bg-blue-700"
+                  } text-white font-bold py-2 px-4 rounded flex items-center`}
+                >
+                  {uploading ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Uploading...
+                    </>
+                  ) : (
+                    "Upload Images"
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         </Modal>
       )}

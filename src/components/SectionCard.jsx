@@ -8,7 +8,7 @@ const SectionCard = ({ section, onEdit, onDelete }) => {
   return (
     <div className="p-6 relative  bg-white shadow-lg rounded-lg overflow-hidden">
       {/* Section Image */}
-      <img src={image}  className="w-full h-40 object-cover rounded-md" />
+      <img src={image}  className="w-full h-1/5 object-top rounded-md" />
 
       <div className="my-4">
         <h3 className="text-xl font-bold text-gray-800">{heading}</h3>
