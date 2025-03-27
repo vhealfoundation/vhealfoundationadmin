@@ -19,6 +19,9 @@ import EditSection from "./pages/EditSection";
 import Stories from "./pages/Stories";
 import AddStories from "./pages/AddStories";
 import EditStories from "./pages/EditStories";
+import Testimonials from "./pages/Testimonials";
+import AddTestimonials from "./pages/AddTestimonials";
+import EditTestimonials from "./pages/EditTestimonials";
 import Gallery from "./pages/Gallery";
 import Login from "./pages/Login";
 import Beneficiaries from "./pages/Beneficiaries";
@@ -63,6 +66,9 @@ function App() {
           <Route path="/stories" element={<ProtectedRoute element={Stories} />} />
           <Route path="/stories/new" element={<ProtectedRoute element={AddStories} />} />
           <Route path="/stories/:id" element={<ProtectedRoute element={EditStories} />} />
+          <Route path="/testimonials" element={<ProtectedRoute element={Testimonials} />} />
+          <Route path="/testimonials/new" element={<ProtectedRoute element={AddTestimonials} />} />
+          <Route path="/testimonials/:id" element={<ProtectedRoute element={EditTestimonials} />} />
           <Route path="/appointments" element={<ProtectedRoute element={Appointments} />} />
           <Route path="/slots" element={<ProtectedRoute element={Slots} />} />
           <Route path="/slots/new" element={<ProtectedRoute element={AddSlot} />} />
