@@ -102,7 +102,7 @@ const GalleryCard = ({ image, category, onDelete }) => {
             <img
               src={image.url}
               alt={image.caption || "Gallery Image"}
-              className="max-w-full max-h-[70vh] object-contain"
+              className="max-w-full max-h-[70vh] object-cover object-top"
             />
             {image.caption && (
               <p className="mt-4 text-center text-gray-700">{image.caption}</p>
