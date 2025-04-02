@@ -4,11 +4,13 @@ import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import Modal from "./Modal";
 
-const GalleryCard = ({ image, category, onDelete }) => {
+const GalleryCard = ({ image, category, onDelete, onUpdateCaption }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const [showCaptionModal, setShowCaptionModal] = useState(false);
   const [caption, setCaption] = useState(image.caption || "");
+  const [updating, setUpdating] = useState(false);
+  const [updateError, setUpdateError] = useState(null);
 
   // Animation variants for image card
   const itemVariants = {
@@ -27,13 +29,31 @@ const GalleryCard = ({ image, category, onDelete }) => {
 
   const handleEditClick = (e) => {
     e.stopPropagation();
+    // Reset caption to current image caption when opening modal
+    setCaption(image.caption || "");
+    setUpdateError(null);
     setShowCaptionModal(true);
   };
 
   const handleCaptionSave = async () => {
-    // In a real implementation, you would update the caption in the backend
-    // For now, we'll just close the modal
-    setShowCaptionModal(false);
+    try {
+      setUpdating(true);
+      setUpdateError(null);
+
+      // Call the parent component's update function
+      const success = await onUpdateCaption(category, image._id, caption);
+
+      if (success) {
+        setShowCaptionModal(false);
+      } else {
+        setUpdateError("Failed to update caption. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error updating caption:", error);
+      setUpdateError("An unexpected error occurred. Please try again.");
+    } finally {
+      setUpdating(false);
+    }
   };
 
   return (
@@ -104,17 +124,38 @@ const GalleryCard = ({ image, category, onDelete }) => {
               alt={image.caption || "Gallery Image"}
               className="max-w-full max-h-[70vh] object-cover object-top"
             />
-            {image.caption && (
-              <p className="mt-4 text-center text-gray-700">{image.caption}</p>
-            )}
+            <div className="mt-4 text-center">
+              {image.caption ? (
+                <p className="text-gray-700">{image.caption}</p>
+              ) : (
+                <p className="text-gray-400 italic">No caption</p>
+              )}
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowImageModal(false);
+                  setTimeout(() => setShowCaptionModal(true), 100);
+                }}
+                className="mt-2 text-blue-500 hover:text-blue-700 text-sm font-medium"
+              >
+                Edit Caption
+              </button>
+            </div>
           </div>
         </Modal>
       )}
 
       {/* Caption Edit Modal */}
       {showCaptionModal && (
-        <Modal onClose={() => setShowCaptionModal(false)}>
+        <Modal onClose={() => !updating && setShowCaptionModal(false)}>
           <h2 className="text-xl font-bold mb-4">Edit Image Caption</h2>
+
+          {updateError && (
+            <div className="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+              {updateError}
+            </div>
+          )}
+
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
               Caption:
@@ -123,28 +164,54 @@ const GalleryCard = ({ image, category, onDelete }) => {
               type="text"
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
+              disabled={updating}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="Enter a caption for this image"
             />
           </div>
+
           <div className="flex justify-end">
             <button
               onClick={() => setShowCaptionModal(false)}
-              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded mr-2"
+              disabled={updating}
+              className={`bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded mr-2 ${
+                updating ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
             >
               Cancel
             </button>
             <button
               onClick={handleCaptionSave}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              disabled={updating}
+              className={`${
+                updating ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-700'
+              } text-white font-bold py-2 px-4 rounded flex items-center`}
             >
-              Save
+              {updating ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Saving...
+                </>
+              ) : (
+                "Save Caption"
+              )}
             </button>
           </div>
         </Modal>
       )}
     </>
   );
+};
+
+// Default props to prevent errors if onUpdateCaption is not provided
+GalleryCard.defaultProps = {
+  onUpdateCaption: async () => {
+    console.error("onUpdateCaption prop is not provided to GalleryCard component");
+    return false;
+  }
 };
 
 export default GalleryCard;

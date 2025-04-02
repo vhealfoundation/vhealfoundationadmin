@@ -25,7 +25,7 @@ const Gallery = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
-  const [imageCaption, setImageCaption] = useState("");
+  const [imageCaptions, setImageCaptions] = useState([]);
 
   // Fetch gallery data on component mount
   useEffect(() => {
@@ -69,6 +69,8 @@ const Gallery = () => {
     setSelectedFiles(files);
     const newPreviews = files.map((file) => URL.createObjectURL(file)); // Generate previews
     setImagePreviews(newPreviews);
+    // Initialize captions array with empty strings for each file
+    setImageCaptions(new Array(files.length).fill(""));
   };
 
   // Handle image uploads when the "Upload" button is clicked
@@ -79,9 +81,9 @@ const Gallery = () => {
       setUploading(true); // Show upload message
       const uploadedUrls = await Promise.all(selectedFiles.map((file) => uploadImageToCloudinary(file)));
 
-      // Save uploaded images to the backend with category and caption
+      // Save uploaded images to the backend with category and individual captions
       await axios.post(`${process.env.REACT_APP_BACKEND_URL}/gallery/category/${selectedCategory}/images`, {
-        images: uploadedUrls.map((url) => ({ url, caption: imageCaption })),
+        images: uploadedUrls.map((url, index) => ({ url, caption: imageCaptions[index] })),
       });
 
       // Refresh gallery data
@@ -91,7 +93,7 @@ const Gallery = () => {
       // Reset the image previews and selected files after successful upload
       setImagePreviews([]); // Clear previews
       setSelectedFiles([]); // Clear selected files
-      setImageCaption(""); // Clear caption
+      setImageCaptions([]); // Clear captions
       setShowModal(false); // Close modal
     } catch (error) {
       console.error("Image upload failed:", error);
@@ -105,7 +107,7 @@ const Gallery = () => {
   const deleteImage = async (categoryTitle, imageId) => {
     try {
       await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/gallery/category/${categoryTitle}/image/${imageId}`);
-      
+
       // Update the state to reflect the deletion
       setGalleryData(prevData => {
         const updatedCategories = prevData.categories.map(category => {
@@ -117,7 +119,7 @@ const Gallery = () => {
           }
           return category;
         });
-        
+
         return {
           ...prevData,
           categories: updatedCategories
@@ -126,6 +128,45 @@ const Gallery = () => {
     } catch (err) {
       console.error("Error deleting image:", err);
       setError("Failed to delete image. Please try again.");
+    }
+  };
+
+  // Update image caption
+  const updateImageCaption = async (categoryTitle, imageId, newCaption) => {
+    try {
+      // Call the API endpoint to update the caption
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/gallery/category/${categoryTitle}/image/${imageId}/caption`, {
+        caption: newCaption
+      });
+
+      // Update the state to reflect the caption change
+      setGalleryData(prevData => {
+        const updatedCategories = prevData.categories.map(category => {
+          if (category.title === categoryTitle) {
+            return {
+              ...category,
+              images: category.images.map(img => {
+                if (img._id === imageId) {
+                  return { ...img, caption: newCaption };
+                }
+                return img;
+              })
+            };
+          }
+          return category;
+        });
+
+        return {
+          ...prevData,
+          categories: updatedCategories
+        };
+      });
+
+      return true; // Return success
+    } catch (err) {
+      console.error("Error updating image caption:", err);
+      setError("Failed to update caption. Please try again.");
+      return false; // Return failure
     }
   };
 
@@ -208,11 +249,12 @@ const Gallery = () => {
                 <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                   {getCategoryImages(category).length > 0 ? (
                     getCategoryImages(category).map((image) => (
-                      <GalleryCard 
-                        key={image._id} 
-                        image={image} 
+                      <GalleryCard
+                        key={image._id}
+                        image={image}
                         category={category}
-                        onDelete={deleteImage} 
+                        onDelete={deleteImage}
+                        onUpdateCaption={updateImageCaption}
                       />
                     ))
                   ) : (
@@ -254,19 +296,6 @@ const Gallery = () => {
 
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2">
-                  Image Caption (optional):
-                </label>
-                <input
-                  type="text"
-                  value={imageCaption}
-                  onChange={(e) => setImageCaption(e.target.value)}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  placeholder="Enter a caption for all images"
-                />
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">
                   Select Images:
                 </label>
                 <input
@@ -290,11 +319,22 @@ const Gallery = () => {
                 <p className="text-sm font-medium text-gray-700 mb-2">Image Previews:</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {imagePreviews.map((preview, index) => (
-                    <div key={index} className="relative group">
+                    <div key={index} className="relative group flex flex-col">
                       <img
                         src={preview}
                         alt={`Preview ${index}`}
-                        className="w-full h-32 object-cover rounded-lg shadow-md"
+                        className="w-full h-32 object-cover rounded-lg shadow-md mb-2"
+                      />
+                      <input
+                        type="text"
+                        value={imageCaptions[index] || ""}
+                        onChange={(e) => {
+                          const newCaptions = [...imageCaptions];
+                          newCaptions[index] = e.target.value;
+                          setImageCaptions(newCaptions);
+                        }}
+                        className="w-full text-sm border rounded py-1 px-2 text-gray-700 focus:outline-none focus:shadow-outline"
+                        placeholder="Add caption for this image"
                       />
                     </div>
                   ))}

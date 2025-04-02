@@ -50,7 +50,7 @@ const EditTestimonials = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold">Edit Testimonial</h1>
+      <h1 className="text-3xl font-bold">Edit Accolades</h1>
 
       {testimonial ? (
         <EditStoriesCard 
@@ -59,7 +59,7 @@ const EditTestimonials = () => {
           onCancel={handleCancel} 
         />
       ) : (
-        <div>No testimonial found.</div>
+        <div>No Accolades found.</div>
       )}
     </div>
   );

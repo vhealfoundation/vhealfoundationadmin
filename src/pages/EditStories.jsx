@@ -47,12 +47,12 @@ const EditStories = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold">Edit Accolades</h1>
+      <h1 className="text-3xl font-bold">Edit Testimonials</h1>
 
       {story ? (
         <EditStoriesCard story={story} onSave={handleSave} onCancel={handleCancel} />
       ) : (
-        <div>No Accolades found.</div>
+        <div>No Testimonials found.</div>
       )}
     </div>
   );

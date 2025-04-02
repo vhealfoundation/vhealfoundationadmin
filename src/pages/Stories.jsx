@@ -43,7 +43,7 @@ const Stories = () => {
     <div className="p-6">
       {loading && <Loader />}
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Accolades</h1>
+        <h1 className="text-3xl font-bold">Testimonials</h1>
         <button
           onClick={() => navigate("/stories/new")} 
           className="flex items-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"

@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 import { Navigate } from "react-router-dom";
 import logo from "../assets/logo.png";
+import Loader from "../components/Loader";
 
 const Login = () => {
-  const { isAuthenticated, login } = useKindeAuth();
+  const { isAuthenticated, login, isLoading } = useKindeAuth();
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   // Redirect to the dashboard if the user is already logged in
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return (
@@ -34,14 +39,8 @@ const Login = () => {
           onClick={login}
           className="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition duration-300 flex items-center justify-center"
         >
-          
           Login
         </button>
-
-        {/* Footer */}
-        <div className="text-center mt-8 text-gray-500 text-sm">
-          © 2025 VHeal Foundation. All rights reserved.
-        </div>
       </div>
     </div>
   );

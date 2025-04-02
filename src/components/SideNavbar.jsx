@@ -98,14 +98,15 @@ const SideNavbar = () => {
             collapsed={isCollapsed}
           />
         </Link>
-        <Link to="/stories">
+
+        <Link to="/testimonials">
           <NavItem
             icon={<BsPersonLinesFill size={24} />}
             label="Accolades"
             collapsed={isCollapsed}
           />
         </Link>
-        <Link to="/testimonials">
+        <Link to="/stories">
           <NavItem
             icon={<BsPersonLinesFill size={24} />}
             label="Testimonials"

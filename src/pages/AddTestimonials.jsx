@@ -48,7 +48,7 @@ const AddTestimonials = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold">Add New Testimonial</h1>
+      <h1 className="text-3xl font-bold">Add New</h1>
       <AddStoriesCard 
         story={newTestimonial} 
         onSave={handleSave} 
