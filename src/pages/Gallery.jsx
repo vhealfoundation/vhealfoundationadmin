@@ -13,7 +13,7 @@ const CATEGORIES = [
   "TRAINING",
   "COACHING",
   "REHABILITATION OF PRISONERS",
-  "OTHER"
+  "LATEST BLOGS"
 ];
 
 const Gallery = () => {
