@@ -15,7 +15,6 @@ const Slot = () => {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [selectedSlot, setSelectedSlot] = useState(null);
-    const [error, setError] = useState(null);
     const [searchDate, setSearchDate] = useState("");
     const [selectedMonth, setSelectedMonth] = useState("");
 
@@ -34,7 +33,8 @@ const Slot = () => {
                 setFilteredSlots(formattedSlots);
                 setLoading(false);
             } catch (err) {
-                setError("Error fetching slots data");
+                console.error("Error fetching slots data:", err);
+                toast.error("Error fetching slots data");
                 setLoading(false);
             }
         };
@@ -61,30 +61,54 @@ const Slot = () => {
     // Filter slots by selected month or search date
     useEffect(() => {
         let filtered = slots;
+        console.log("Filtering with month:", selectedMonth, "and date:", searchDate);
 
         if (selectedMonth) {
             filtered = filtered.filter(slot => moment(slot.date, "DD-MM-YYYY").format("MMMM YYYY") === selectedMonth);
+            console.log("After month filter:", filtered.length, "slots");
         }
 
         if (searchDate) {
             const formattedSearchDate = moment(searchDate, "YYYY-MM-DD").format("DD-MM-YYYY");
             filtered = filtered.filter(slot => slot.date === formattedSearchDate);
+            console.log("After date filter:", filtered.length, "slots");
         }
 
         setFilteredSlots(filtered);
     }, [selectedMonth, searchDate, slots]);
+
+    // Function to clear all filters
+    const clearAllFilters = () => {
+        setSelectedMonth("");
+        setSearchDate("");
+    };
 
     return (
         <div className="p-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <h1 className="text-3xl font-bold">Available Slots</h1>
 
-                <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex flex-col md:flex-row gap-4 items-center">
+                    {/* Clear All Filters Button - Only show when filters are applied */}
+                    {(selectedMonth || searchDate) && (
+                        <button
+                            className="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 flex items-center"
+                            onClick={clearAllFilters}
+                        >
+                            <span className="mr-1">✕</span> Clear Filters
+                        </button>
+                    )}
                     {/* Filter by Month Dropdown */}
                     <select
                         className="px-4 py-2 border rounded"
                         value={selectedMonth}
-                        onChange={(e) => setSelectedMonth(e.target.value)}
+                        onChange={(e) => {
+                            setSelectedMonth(e.target.value);
+                            // Clear date filter when changing month filter
+                            if (e.target.value === "" && searchDate) {
+                                setSearchDate("");
+                            }
+                        }}
                     >
                         <option value="">All Months</option>
                         {months.map((month, index) => (
@@ -93,12 +117,29 @@ const Slot = () => {
                     </select>
 
                     {/* Search by Date Input */}
-                    <input
-                        type="date"
-                        className="px-4 py-2 border rounded"
-                        value={searchDate}
-                        onChange={(e) => setSearchDate(e.target.value)}
-                    />
+                    <div className="flex items-center">
+                        <input
+                            type="date"
+                            className="px-4 py-2 border rounded"
+                            value={searchDate}
+                            onChange={(e) => {
+                                setSearchDate(e.target.value);
+                                // Clear month filter when setting date filter
+                                if (e.target.value && selectedMonth) {
+                                    setSelectedMonth("");
+                                }
+                            }}
+                        />
+                        {searchDate && (
+                            <button
+                                className="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+                                onClick={() => setSearchDate("")}
+                                title="Clear date filter"
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
 
                     {/* Add New Slot Button */}
                     <button
@@ -128,7 +169,7 @@ const Slot = () => {
                                 onEdit={(slot) => {
                                     navigate(`/slots/${slot.date}/${slot._id}`);
                                 }}
-                                
+
                             />
                         ))
                     ) : (

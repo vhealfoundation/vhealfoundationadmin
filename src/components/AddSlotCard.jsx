@@ -54,7 +54,7 @@ const AddSlotCard = ({ formData, onFormChange, onSubmit, onCancel, loading }) =>
   };
 
   return (
-    <div className="mt-12 mx-auto p-8 bg-white rounded-xl shadow-lg border border-gray-200">
+    <div className="mt-12 mx-auto p-8 bg-white rounded-xl shadow-lg border border-gray-200 relative">
       <h1 className="text-3xl font-semibold text-gray-800 mb-6">Enter Date & Available Slots</h1>
 
       {/* Calendar for Selecting Date */}
@@ -107,9 +107,9 @@ const AddSlotCard = ({ formData, onFormChange, onSubmit, onCancel, loading }) =>
       </div>
 
       {/* List of Selected Time Slots */}
-      <div>
+      <div className="mb-20"> {/* Added margin-bottom to ensure space for buttons */}
         <label className="block text-gray-700 text-sm font-medium mb-2">Added Slots:</label>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 max-h-60 overflow-y-auto p-2"> {/* Added max height and overflow */}
           {formData.slots.length === 0 ? (
             <p className="text-gray-500">No slots added</p>
           ) : (
@@ -132,7 +132,7 @@ const AddSlotCard = ({ formData, onFormChange, onSubmit, onCancel, loading }) =>
       </div>
 
       {/* Action Buttons (Cancel & Save) */}
-      <div className="flex justify-end space-x-4 mt-6">
+      <div className="flex justify-end space-x-4 mt-6 absolute bottom-6 right-8 bg-white p-2 z-10">
         <button
           type="button"
           onClick={onCancel}

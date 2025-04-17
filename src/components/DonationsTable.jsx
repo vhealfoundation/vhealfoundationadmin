@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import moment from 'moment';
 // import { AiOutlineDelete } from "react-icons/ai";
 // import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 
@@ -26,6 +27,7 @@ const DonationsTable = ({ donationsData }) => {
             <th className="py-3 px-4 text-left">Name</th>
             <th className="py-3 px-4 text-left">Email</th>
             <th className="py-3 px-4 text-left">Phone</th>
+            <th className="py-3 px-4 text-left">Date</th>
             <th className="py-3 px-4 text-left">Amount</th>
             <th className="py-3 px-4 text-left">Beneficiary</th>
             <th className="py-3 px-4 text-left">Status</th>
@@ -40,6 +42,7 @@ const DonationsTable = ({ donationsData }) => {
                 <td className="py-3 px-4">{donation?.name}</td>
                 <td className="py-3 px-4">{donation?.email}</td>
                 <td className="py-3 px-4">{donation?.phone}</td>
+                <td className="py-3 px-4">{moment(donation?.createdAt).format("DD-MM-YYYY")}</td>
                 <td className="py-3 px-4">{donation?.amount}</td>
                 <td className="py-3 px-4">{donation?.beneficiary.name}</td>
                 <td className="py-3 px-4">
@@ -56,7 +59,7 @@ const DonationsTable = ({ donationsData }) => {
                   </button>
                 </td> */}
               </tr>
-             
+
               {/* {showModal && (
                 <ConfirmDeleteModal
                   isOpen={showModal}

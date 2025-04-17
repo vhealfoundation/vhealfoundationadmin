@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 import { Navigate } from "react-router-dom";
 import logo from "../assets/logo.png";
@@ -6,13 +6,30 @@ import Loader from "../components/Loader";
 
 const Login = () => {
   const { isAuthenticated, login, isLoading } = useKindeAuth();
+  const [persistedAuth, setPersistedAuth] = useState(false);
 
+  // Check for persisted authentication
+  useEffect(() => {
+    const storedUser = localStorage.getItem('kinde_user');
+    if (storedUser) {
+      setPersistedAuth(true);
+    }
+
+    // If authentication check is complete and user is not authenticated,
+    // clear any stale persisted data
+    if (!isLoading && !isAuthenticated) {
+      localStorage.removeItem('kinde_user');
+      setPersistedAuth(false);
+    }
+  }, [isLoading, isAuthenticated]);
+
+  // Show loader while authentication state is being determined
   if (isLoading) {
     return <Loader />;
   }
 
-  // Redirect to the dashboard if the user is already logged in
-  if (isAuthenticated) {
+  // Redirect to the dashboard if the user is already logged in or has persisted auth
+  if (isAuthenticated || persistedAuth) {
     return <Navigate to="/dashboard" replace />;
   }
 

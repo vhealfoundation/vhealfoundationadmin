@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Route, Routes, useLocation, Navigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
@@ -34,17 +34,46 @@ import EditSlot from "./pages/EditSlot";
 
 function App() {
   const location = useLocation();
-  const { isAuthenticated } = useKindeAuth();
+  const { isAuthenticated, isLoading } = useKindeAuth();
+  const [persistedAuth, setPersistedAuth] = useState(false);
+
+  // Check for persisted authentication
+  useEffect(() => {
+    const storedUser = localStorage.getItem('kinde_user');
+    if (storedUser) {
+      setPersistedAuth(true);
+    }
+
+    // If authentication check is complete and user is not authenticated,
+    // clear any stale persisted data
+    if (!isLoading && !isAuthenticated) {
+      localStorage.removeItem('kinde_user');
+      setPersistedAuth(false);
+    }
+  }, [isLoading, isAuthenticated]);
+
   return (
     <div>
       <AnimatePresence>
         <ScrollToTop />
         <Routes location={location} key={location.pathname}>
           {/* Redirect to login if not authenticated */}
-          
+
           <Route
             path="/"
-            element={isAuthenticated ? <Navigate to="/dashboard" /> : <Navigate to="/login" />}
+            element={
+              isLoading ? (
+                <div className="min-h-screen flex items-center justify-center bg-primary">
+                  <div className="bg-white shadow-2xl rounded-lg px-10 py-12 w-full max-w-md">
+                    <h1 className="text-2xl font-bold text-center text-gray-800 mb-4">Loading...</h1>
+                  </div>
+                </div>
+              ) : isAuthenticated || persistedAuth ? (
+                <Navigate to="/dashboard" />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
           />
 
           {/* Public route */}

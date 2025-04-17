@@ -9,19 +9,32 @@ import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 const SideNavbar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { user, logout } = useKindeAuth();
+
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
   };
 
+  // Custom logout handler
+  const handleLogout = () => {
+    // Clear any stored authentication data
+    localStorage.removeItem('kinde_user');
+
+    // Set a flag in sessionStorage to redirect to login after Kinde logout
+    sessionStorage.setItem('redirect_after_logout', 'true');
+
+    // Call the standard Kinde logout function
+    logout();
+  };
+
   return (
     <div
-      className={`z-10 flex flex-col h-screen bg-gray-900 text-white transition-all duration-300 ease-in-out 
+      className={`z-10 flex flex-col h-screen bg-gray-900 text-white transition-all duration-300 ease-in-out
         ${isCollapsed ? "w-16" : "w-[232px]"}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
         <h1
-          className={`text-xl font-bold transition-all duration-300 
+          className={`text-xl font-bold transition-all duration-300
             ${isCollapsed ? "hidden" : "block"}`}
         >
           D&M
@@ -76,7 +89,7 @@ const SideNavbar = () => {
             collapsed={isCollapsed}
           />
         </Link>
-        
+
         <Link to="/about">
           <NavItem
             icon={<FaInfoCircle size={24} />}
@@ -127,7 +140,7 @@ const SideNavbar = () => {
             collapsed={isCollapsed}
           />
         </Link>
-        <div onClick={logout}>
+        <div onClick={handleLogout}>
           <NavItem
             icon={<AiOutlineLogout size={24} />}
             label="Logout"

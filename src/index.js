@@ -20,6 +20,22 @@ root.render(
         clientId={authConfig.clientId}
         redirectUri={authConfig.redirectUri}
         logoutRedirectUri={authConfig.logoutRedirectUri}
+        callbacks={{
+          onSuccess: (user, appState) => {
+            // Store authentication state in localStorage for persistence
+            if (user) {
+              localStorage.setItem('kinde_user', JSON.stringify(user));
+            }
+          },
+          // Handle post logout redirection
+          onLogout: () => {
+            // Check if we should redirect to login page
+            if (sessionStorage.getItem('redirect_after_logout') === 'true') {
+              sessionStorage.removeItem('redirect_after_logout');
+              window.location.href = window.location.origin + '/login';
+            }
+          }
+        }}
       >
       <App />
       <Toaster />

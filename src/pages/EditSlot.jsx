@@ -16,8 +16,13 @@ const EditSlot = () => {
 
   // Format date to YYYY-MM-DD
   const formatDate = (inputDate) => {
-    const [day, month, year] = inputDate.split("-");
-    return `${year}-${month}-${day}`;
+    try {
+      const [day, month, year] = inputDate.split("-");
+      return `${year}-${month}-${day}`;
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return inputDate; // Return original date if formatting fails
+    }
   };
 
   const formattedDate = formatDate(date);
@@ -26,19 +31,37 @@ const EditSlot = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
+        console.log("Fetching slots for date:", formattedDate);
+        setLoading(true);
+        setError(null);
+
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_URL}/appointments/${formattedDate}`
         );
+        console.log("API Response:", response.data);
+
         if (!response.data || !response.data.slot || !response.data.slot.slots) {
           setError("No slots found for this date");
           setLoading(false);
           return;
         }
-        setSlots(response.data.slot.slots);
+
+        // Handle case where slots might be empty array
+        const slotsData = response.data.slot.slots || [];
+        console.log("Slots data:", slotsData);
+
+        // Add additional information for display
+        const enhancedSlots = slotsData.map(slot => ({
+          ...slot,
+          // Add any additional properties needed for display
+          displayStatus: slot.booked ? 'Booked' : 'Available'
+        }));
+
+        setSlots(enhancedSlots);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching slots:", err);
-        setError("Error fetching slot details");
+        setError("Error fetching slot details: " + (err.message || 'Unknown error'));
         setLoading(false);
       }
     };
@@ -61,7 +84,7 @@ const EditSlot = () => {
           }
         );
       }
-  
+
       for (const slot of newSlots) {
         await axios.put(
           `${process.env.REACT_APP_BACKEND_URL}/slots/${formattedDate}/new`,
@@ -74,19 +97,19 @@ const EditSlot = () => {
           }
         );
       }
-  
+
       for (const slotId of removedSlots) {
         await axios.put(
           `${process.env.REACT_APP_BACKEND_URL}/slots/${formattedDate}/${slotId}`,
           { remove: true }
         );
       }
-  
+
       // Fetch updated slots after updating
       const response = await axios.get(
         `${process.env.REACT_APP_BACKEND_URL}/appointments/${formattedDate}`
       );
-  
+
       setSlots(response.data.slot.slots);
       setRemovedSlots([]);
       toast.success("Slots updated successfully!");
@@ -96,20 +119,34 @@ const EditSlot = () => {
       console.error(err);
     }
   };
-  
+
+
+  // Handle cancel button click
+  const handleCancel = () => {
+    navigate("/slots");
+  };
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold">Edit Slots</h1>
+      <h1 className="text-3xl font-bold">Edit Slots for {date}</h1>
       {loading ? (
         <Loader />
       ) : error ? (
-        <p className="text-red-500">{error}</p>
+        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-500 font-medium">{error}</p>
+          <button
+            onClick={handleCancel}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition"
+          >
+            Back to Slots
+          </button>
+        </div>
       ) : (
         <EditSlotCard
           slots={slots}
           onSubmit={handleUpdate}
           onRemove={(slotId) => setRemovedSlots((prev) => [...prev, slotId])}
+          onCancel={handleCancel}
         />
       )}
     </div>

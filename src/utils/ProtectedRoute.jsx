@@ -8,11 +8,31 @@ const ProtectedRoute = ({ element: Component }) => {
   const { isAuthenticated, isLoading, getUser, logout } = useKindeAuth();
   const [isAdmin, setIsAdmin] = useState(null);
   const [isCheckingAdmin, setIsCheckingAdmin] = useState(true);
+  const [persistedAuth, setPersistedAuth] = useState(false);
   const user = getUser();
 
+  // Check for persisted authentication on component mount
   useEffect(() => {
+    const storedUser = localStorage.getItem('kinde_user');
+    if (storedUser && !isAuthenticated && isLoading) {
+      setPersistedAuth(true);
+    } else if (isAuthenticated) {
+      setPersistedAuth(true);
+    }
+  }, [isAuthenticated, isLoading]);
+
+  useEffect(() => {
+    // Only run the admin check when authentication is complete (not loading)
+    // and the user is authenticated
+    if (isLoading) return;
+
     const checkAdminAccess = async () => {
-      if (!isAuthenticated || !user?.email) {
+      // If we have persisted auth but no user object yet, wait for it
+      if (persistedAuth && !user?.email && isLoading) {
+        return; // Don't set isCheckingAdmin to false yet, wait for user data
+      }
+
+      if ((!isAuthenticated && !persistedAuth) || !user?.email) {
         setIsCheckingAdmin(false);
         return;
       }
@@ -48,15 +68,17 @@ const ProtectedRoute = ({ element: Component }) => {
     };
 
     checkAdminAccess();
-  }, [isAuthenticated, user?.email, logout]);
+  }, [isAuthenticated, user?.email, logout, isLoading, persistedAuth]);
 
   // Show loader while checking authentication or admin status
   if (isLoading || isCheckingAdmin) {
     return <Loader />;
   }
 
-  // If not authenticated, redirect to login
-  if (!isAuthenticated) {
+  // If not authenticated, not loading, and no persisted auth, redirect to login
+  if (!isAuthenticated && !isLoading && !persistedAuth) {
+    // Clear any stale data before redirecting
+    localStorage.removeItem('kinde_user');
     return <Navigate to="/login" replace />;
   }
 
