@@ -44,11 +44,18 @@ function App() {
       setPersistedAuth(true);
     }
 
-    // If authentication check is complete and user is not authenticated,
-    // clear any stale persisted data
+    // Only clear persisted data if we're sure the user is not authenticated
+    // and the authentication check is complete (not loading)
     if (!isLoading && !isAuthenticated) {
-      localStorage.removeItem('kinde_user');
-      setPersistedAuth(false);
+      // We'll only remove the persisted auth when we're certain the user has logged out
+      // This prevents redirecting to login during page reloads
+      const isLogout = localStorage.getItem('kinde_logout') === 'true';
+      
+      if (isLogout) {
+        localStorage.removeItem('kinde_user');
+        localStorage.removeItem('kinde_logout');
+        setPersistedAuth(false);
+      }
     }
   }, [isLoading, isAuthenticated]);
 
@@ -68,7 +75,7 @@ function App() {
                     <h1 className="text-2xl font-bold text-center text-gray-800 mb-4">Loading...</h1>
                   </div>
                 </div>
-              ) : isAuthenticated || persistedAuth ? (
+              ) : isAuthenticated || persistedAuth || localStorage.getItem('kinde_user') ? (
                 <Navigate to="/dashboard" />
               ) : (
                 <Navigate to="/login" />

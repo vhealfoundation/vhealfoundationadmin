@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Switch from "@mui/material/Switch";
 import axios from "axios";
 import moment from "moment";
@@ -7,13 +7,27 @@ const AppointmentsTable = ({ appointmentsData }) => {
   // Use local state to manage appointments data for inline updates.
   const [localAppointments, setLocalAppointments] = useState(appointmentsData || []);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10; // Show 10 rows at a time
 
-  // Sync local state with prop updates.
+  // Sync local state with prop updates and sort by date (newest first).
   useEffect(() => {
-    setLocalAppointments(appointmentsData || []);
+    if (appointmentsData) {
+      // Sort appointments by date and time (newest first)
+      const sortedAppointments = [...appointmentsData].sort((a, b) => {
+        // First compare dates (newest first)
+        const dateComparison = new Date(b.date) - new Date(a.date);
+        if (dateComparison !== 0) return dateComparison;
+
+        // If dates are the same, compare times (latest first)
+        return a.time < b.time ? 1 : -1;
+      });
+      setLocalAppointments(sortedAppointments);
+    } else {
+      setLocalAppointments([]);
+    }
   }, [appointmentsData]);
 
+  // Calculate pagination
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = localAppointments.slice(indexOfFirstItem, indexOfLastItem);
@@ -26,13 +40,13 @@ const AppointmentsTable = ({ appointmentsData }) => {
   const handleToggleCompleted = async (appointment, newStatus) => {
     try {
       const formattedDate = moment(appointment.date).format("YYYY-MM-DD"); // Ensure correct date format
-  
+
       // API call to update the completed status
       await axios.put(
         `${process.env.REACT_APP_BACKEND_URL}/slots/${formattedDate}/${appointment._id}/completed`,
         { completed: newStatus }
       );
-  
+
       // Update the local state
       const updatedAppointments = localAppointments.map((appt) =>
         appt._id === appointment._id ? { ...appt, completed: newStatus } : appt
@@ -42,7 +56,7 @@ const AppointmentsTable = ({ appointmentsData }) => {
       console.error("Error updating appointment completed status:", error);
     }
   };
-  
+
 
   return (
     <div className="pt-6 overflow-x-auto">
@@ -62,7 +76,7 @@ const AppointmentsTable = ({ appointmentsData }) => {
           {currentItems.map((appointment, index) => (
             <tr
               key={appointment._id}
-              className={(indexOfFirstItem + index) % 2 === 0 ? "bg-gray-100" : "bg-white"}
+              className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
             >
               <td className="py-3 px-4">
                 {indexOfFirstItem + index + 1}
@@ -89,19 +103,29 @@ const AppointmentsTable = ({ appointmentsData }) => {
                 </span>
               </td>
               <td className="py-3 px-4">
-                <Switch
-                  checked={appointment.completed}
-                  onChange={(event) => handleToggleCompleted(appointment, event.target.checked)}
-                  color="primary"
-                />
+                <div className="flex items-center">
+                  <Switch
+                    checked={appointment.completed}
+                    onChange={(event) => handleToggleCompleted(appointment, event.target.checked)}
+                    color="primary"
+                  />
+                  <span className={`ml-2 py-1 px-3 rounded-full ${appointment.completed ? "bg-green-500" : "bg-yellow-500"} text-white text-xs`}>
+                    {appointment.completed ? "Completed" : "Pending"}
+                  </span>
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {/* Pagination */}
-      <div className="flex justify-center mt-4">
+      {/* Pagination and total count */}
+      <div className="flex justify-between items-center mt-4">
+        <div className="text-gray-700">
+          <p>Total Appointments: {localAppointments.length}</p>
+        </div>
+
+        {/* Pagination controls */}
         <nav>
           <ul className="flex list-none space-x-2">
             <li>
@@ -113,16 +137,82 @@ const AppointmentsTable = ({ appointmentsData }) => {
                 Prev
               </button>
             </li>
-            {Array.from({ length: totalPages }, (_, index) => (
-              <li key={index}>
-                <button
-                  onClick={() => paginate(index + 1)}
-                  className={`px-4 py-2 rounded-lg ${currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"} hover:bg-blue-400`}
-                >
-                  {index + 1}
-                </button>
-              </li>
-            ))}
+            {totalPages <= 5 ? (
+              // If 5 or fewer pages, show all page numbers
+              Array.from({ length: totalPages }, (_, i) => (
+                <li key={i}>
+                  <button
+                    onClick={() => paginate(i + 1)}
+                    className={`px-4 py-2 rounded-lg ${currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"} hover:bg-blue-400`}
+                  >
+                    {i + 1}
+                  </button>
+                </li>
+              ))
+            ) : (
+              // If more than 5 pages, show a limited set with ellipsis
+              <>
+                {/* First page */}
+                {currentPage > 2 && (
+                  <li>
+                    <button
+                      onClick={() => paginate(1)}
+                      className={`px-4 py-2 rounded-lg ${currentPage === 1 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"} hover:bg-blue-400`}
+                    >
+                      1
+                    </button>
+                  </li>
+                )}
+
+                {/* Ellipsis if needed */}
+                {currentPage > 3 && (
+                  <li className="flex items-center px-2">...</li>
+                )}
+
+                {/* Pages around current page */}
+                {Array.from({ length: Math.min(3, totalPages) }, (_, i) => {
+                  let pageNum;
+                  if (currentPage === 1 || currentPage === 2) {
+                    pageNum = i + 1;
+                  } else if (currentPage === totalPages || currentPage === totalPages - 1) {
+                    pageNum = totalPages - 2 + i;
+                  } else {
+                    pageNum = currentPage - 1 + i;
+                  }
+
+                  if (pageNum > 0 && pageNum <= totalPages) {
+                    return (
+                      <li key={pageNum}>
+                        <button
+                          onClick={() => paginate(pageNum)}
+                          className={`px-4 py-2 rounded-lg ${currentPage === pageNum ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"} hover:bg-blue-400`}
+                        >
+                          {pageNum}
+                        </button>
+                      </li>
+                    );
+                  }
+                  return null;
+                })}
+
+                {/* Ellipsis if needed */}
+                {currentPage < totalPages - 2 && (
+                  <li className="flex items-center px-2">...</li>
+                )}
+
+                {/* Last page */}
+                {currentPage < totalPages - 1 && (
+                  <li>
+                    <button
+                      onClick={() => paginate(totalPages)}
+                      className={`px-4 py-2 rounded-lg ${currentPage === totalPages ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"} hover:bg-blue-400`}
+                    >
+                      {totalPages}
+                    </button>
+                  </li>
+                )}
+              </>
+            )}
             <li>
               <button
                 onClick={() => paginate(currentPage + 1)}

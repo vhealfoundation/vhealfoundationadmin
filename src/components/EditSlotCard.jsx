@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { MenuItem, Select, Button } from "@mui/material";
 import toast from "react-hot-toast";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaSpinner } from "react-icons/fa";
 
 const allAvailableSlots = [
   "9:00 AM - 10:00 AM",
@@ -20,6 +20,7 @@ const EditSlotCard = ({ slots, onSubmit, onRemove, onCancel }) => {
   const [selectedTimes, setSelectedTimes] = useState([]);
   const [updatedSlots, setUpdatedSlots] = useState([...slots]);
   const [availableSlots, setAvailableSlots] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Filter out already booked slots and existing slots from available options
   useEffect(() => {
@@ -86,14 +87,24 @@ const EditSlotCard = ({ slots, onSubmit, onRemove, onCancel }) => {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (isSaving) return; // Prevent multiple clicks
+
+    setIsSaving(true);
     const newSlots = updatedSlots.filter((slot) => slot._id === "new");
     const existingSlots = updatedSlots.filter((slot) => slot._id !== "new");
 
-    onSubmit({ newSlots, existingSlots });
+    try {
+      await onSubmit({ newSlots, existingSlots });
 
-    // Reset local state to reflect saved data
-    setUpdatedSlots([...existingSlots, ...newSlots]);
+      // Reset local state to reflect saved data
+      setUpdatedSlots([...existingSlots, ...newSlots]);
+    } catch (error) {
+      console.error('Error saving slots:', error);
+      toast.error('Failed to save slots. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -183,9 +194,17 @@ const EditSlotCard = ({ slots, onSubmit, onRemove, onCancel }) => {
         <button
           type="button"
           onClick={handleSave}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
+          disabled={isSaving}
+          className={`px-4 py-2 ${isSaving ? 'bg-blue-400' : 'bg-blue-500 hover:bg-blue-700'} text-white rounded-lg flex items-center justify-center min-w-[80px]`}
         >
-          Save
+          {isSaving ? (
+            <>
+              <FaSpinner className="animate-spin mr-2" />
+              Saving...
+            </>
+          ) : (
+            'Save'
+          )}
         </button>
       </div>
     </div>

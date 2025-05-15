@@ -15,11 +15,19 @@ const Login = () => {
       setPersistedAuth(true);
     }
 
-    // If authentication check is complete and user is not authenticated,
-    // clear any stale persisted data
+    // Only clear persisted data if we're sure the user is not authenticated
+    // and the authentication check is complete (not loading)
     if (!isLoading && !isAuthenticated) {
-      localStorage.removeItem('kinde_user');
-      setPersistedAuth(false);
+      // Don't immediately remove persisted auth on page reload
+      // This prevents flashing to login page during authentication check
+      const isPageReload = window.performance &&
+        window.performance.navigation &&
+        window.performance.navigation.type === window.performance.navigation.TYPE_RELOAD;
+
+      if (!isPageReload) {
+        localStorage.removeItem('kinde_user');
+        setPersistedAuth(false);
+      }
     }
   }, [isLoading, isAuthenticated]);
 

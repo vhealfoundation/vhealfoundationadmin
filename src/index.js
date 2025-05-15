@@ -21,7 +21,7 @@ root.render(
         redirectUri={authConfig.redirectUri}
         logoutRedirectUri={authConfig.logoutRedirectUri}
         callbacks={{
-          onSuccess: (user, appState) => {
+          onSuccess: (user) => {
             // Store authentication state in localStorage for persistence
             if (user) {
               localStorage.setItem('kinde_user', JSON.stringify(user));

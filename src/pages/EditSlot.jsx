@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -71,6 +71,7 @@ const EditSlot = () => {
   // Handle updating slots
   const handleUpdate = async ({ newSlots, existingSlots }) => {
     try {
+      // Process existing slots
       for (const slot of existingSlots) {
         if (!slot._id) continue;
         await axios.put(
@@ -85,6 +86,7 @@ const EditSlot = () => {
         );
       }
 
+      // Process new slots
       for (const slot of newSlots) {
         await axios.put(
           `${process.env.REACT_APP_BACKEND_URL}/slots/${formattedDate}/new`,
@@ -98,6 +100,7 @@ const EditSlot = () => {
         );
       }
 
+      // Process removed slots
       for (const slotId of removedSlots) {
         await axios.put(
           `${process.env.REACT_APP_BACKEND_URL}/slots/${formattedDate}/${slotId}`,
@@ -114,9 +117,11 @@ const EditSlot = () => {
       setRemovedSlots([]);
       toast.success("Slots updated successfully!");
       navigate("/slots");
+      return true; // Return success to the EditSlotCard component
     } catch (err) {
-      toast.error("Failed to update slots");
-      console.error(err);
+      toast.error("Failed to update slots: " + (err.message || 'Unknown error'));
+      console.error("Error updating slots:", err);
+      throw err; // Throw the error to be caught by the EditSlotCard component
     }
   };
 

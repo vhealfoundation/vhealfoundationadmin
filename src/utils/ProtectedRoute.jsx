@@ -14,12 +14,18 @@ const ProtectedRoute = ({ element: Component }) => {
   // Check for persisted authentication on component mount
   useEffect(() => {
     const storedUser = localStorage.getItem('kinde_user');
-    if (storedUser && !isAuthenticated && isLoading) {
+    if (storedUser) {
       setPersistedAuth(true);
-    } else if (isAuthenticated) {
+      // Store user data in localStorage to maintain persistence
+      if (isAuthenticated && user) {
+        localStorage.setItem('kinde_user', JSON.stringify(user));
+      }
+    } else if (isAuthenticated && user) {
+      // If authenticated but no stored user, store the user data
+      localStorage.setItem('kinde_user', JSON.stringify(user));
       setPersistedAuth(true);
     }
-  }, [isAuthenticated, isLoading]);
+  }, [isAuthenticated, isLoading, user]);
 
   useEffect(() => {
     // Only run the admin check when authentication is complete (not loading)
@@ -51,6 +57,8 @@ const ProtectedRoute = ({ element: Component }) => {
 
         const data = await response.json();
         if (!(data.success && data.isAuthenticated)) {
+          localStorage.setItem('kinde_logout', 'true');
+          localStorage.removeItem('kinde_user');
           await logout();
           toast.error("Access denied. You are not an admin.");
           setIsAdmin(false);
@@ -60,6 +68,8 @@ const ProtectedRoute = ({ element: Component }) => {
       } catch (error) {
         console.error("Error checking admin access:", error);
         toast.error("Failed to verify admin access. Please try again.");
+        localStorage.setItem('kinde_logout', 'true');
+        localStorage.removeItem('kinde_user');
         await logout();
         setIsAdmin(false);
       } finally {
@@ -77,13 +87,23 @@ const ProtectedRoute = ({ element: Component }) => {
 
   // If not authenticated, not loading, and no persisted auth, redirect to login
   if (!isAuthenticated && !isLoading && !persistedAuth) {
-    // Clear any stale data before redirecting
-    localStorage.removeItem('kinde_user');
-    return <Navigate to="/login" replace />;
+    // Only clear data and redirect if we're sure it's a logout, not just a page reload
+    if (localStorage.getItem('kinde_logout') === 'true') {
+      localStorage.removeItem('kinde_user');
+      localStorage.removeItem('kinde_logout');
+      return <Navigate to="/login" replace />;
+    }
+    
+    // If we have a stored user but Kinde says not authenticated, it might be a session refresh
+    // Let's check if we have stored user data before redirecting
+    const storedUser = localStorage.getItem('kinde_user');
+    if (!storedUser) {
+      return <Navigate to="/login" replace />;
+    }
   }
 
   // If authenticated but not admin, the useEffect will handle logout and redirection
-  if (!isAdmin) {
+  if (isAdmin === false) { // Only redirect if we've confirmed user is not an admin
     return <Navigate to="/login" replace />;
   }
 
