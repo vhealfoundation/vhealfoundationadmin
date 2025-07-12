@@ -191,7 +191,7 @@ const EditSectionCard = ({ section, onUpdate, onCancel }) => {
               e.target.style.height = 'auto'; 
               e.target.style.height = `${e.target.scrollHeight}px`; 
             }}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg resize-y"
             rows={4}
           />
 
@@ -201,17 +201,21 @@ const EditSectionCard = ({ section, onUpdate, onCancel }) => {
         <div className="mb-4">
           <label className="block text-gray-700">Details</label>
           {formData.features.map((feature, index) => (
-            <div key={index} className="my-2 flex items-center gap-4">
-              <input
-                type="text"
+            <div key={index} className="my-2 flex items-start gap-4">
+              <textarea
                 value={feature}
                 onChange={(e) => handleFeaturesChange(index, e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder={`Feature ${index + 1}`}
+                onInput={(e) => {
+                  e.target.style.height = 'auto'; 
+                  e.target.style.height = `${e.target.scrollHeight}px`; 
+                }}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg resize-y"
+                placeholder={`Detail ${index + 1}`}
+                rows={2}
               />
               <button
                 onClick={() => removeFeature(index)}
-                className="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700"
+                className="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700 mt-1"
               >
                 <FaTrash className="mr-2" />
                 Delete

@@ -5,6 +5,7 @@ import { MdOutlineCategory } from "react-icons/md";
 import { BsPersonLinesFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
+import logo from "../assets/logo-circle.png";
 
 const SideNavbar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -29,7 +30,7 @@ const SideNavbar = () => {
   return (
     <div
       className={`z-10 flex flex-col h-screen bg-gray-900 text-white transition-all duration-300 ease-in-out
-        ${isCollapsed ? "w-16" : "w-[232px]"}`}
+        ${isCollapsed ? "w-16" : "w-[233px]"}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
@@ -37,7 +38,13 @@ const SideNavbar = () => {
           className={`text-xl font-bold transition-all duration-300
             ${isCollapsed ? "hidden" : "block"}`}
         >
-          D&M
+          <div className="flex items-center gap-2 ">
+          <img src={logo} alt="Logo" className="w-[40px] h-[40px] lg:w-[32px] lg:h-[32px] object-cover" />
+          <div>
+            <p className="text-[13px] font-bold text-white whitespace-nowrap">V HEAL FOUNDATION</p>
+           
+          </div>
+        </div>
         </h1>
         <button
           onClick={toggleCollapse}
